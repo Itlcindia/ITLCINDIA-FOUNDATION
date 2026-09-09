@@ -174,7 +174,13 @@ export async function POST(req: NextRequest) {
     const { action, toEmail, smtpHost, smtpPort, smtpUser, smtpPass, smtpFrom } = body;
 
     if (action === 'test_smtp') {
-      const recipient = toEmail || 'pankajkumarpreet4@gmail.com';
+      if (!toEmail || !toEmail.trim()) {
+        return NextResponse.json(
+          { success: false, error: 'Please enter a recipient email address to send the test email.' },
+          { status: 400 }
+        );
+      }
+      const recipient = toEmail.trim();
       const host = smtpHost || process.env.SMTP_HOST || 'smtp.hostinger.com';
       const port = parseInt(smtpPort || process.env.SMTP_PORT || '465', 10);
       const user = smtpUser || process.env.SMTP_USER || 'donation@itlcfoundation.com';

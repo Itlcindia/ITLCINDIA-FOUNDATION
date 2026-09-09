@@ -342,7 +342,7 @@ export function Footer() {
               Refund Policy
             </Link>
             <span>&bull;</span>
-            <Link href="/site-map" className="hover:text-emerald-300 transition-colors hover:underline">
+            <Link href="/sitemap" className="hover:text-emerald-300 transition-colors hover:underline">
               Sitemap
             </Link>
           </div>

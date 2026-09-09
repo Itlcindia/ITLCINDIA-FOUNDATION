@@ -100,7 +100,7 @@ export default function AdminPage() {
   const [isSavingSettings, setIsSavingSettings] = useState(false);
   const [showSmtpPass, setShowSmtpPass] = useState(false);
   const [showRzpSecret, setShowRzpSecret] = useState(false);
-  const [testEmailRecipient, setTestEmailRecipient] = useState('pankajkumarpreet4@gmail.com');
+  const [testEmailRecipient, setTestEmailRecipient] = useState('');
   const [isSendingTestMail, setIsSendingTestMail] = useState(false);
 
   // Media Library state
@@ -222,9 +222,6 @@ export default function AdminPage() {
       const data = await res.json();
       if (data.success && data.settings) {
         setSettings(data.settings);
-        if (data.settings.smtpUser && !testEmailRecipient) {
-          setTestEmailRecipient('pankajkumarpreet4@gmail.com');
-        }
       }
     } catch (err) {
       console.error('Failed to load settings:', err);
@@ -3447,8 +3444,8 @@ export default function AdminPage() {
                           type="button"
                           onClick={() => {
                             const val = Number(newPresetAmount);
-                            if (!val || val < 10) {
-                              toast({ title: 'Invalid Amount', description: 'Enter an amount of at least ₹10', variant: 'destructive' });
+                            if (!val || val < 1) {
+                              toast({ title: 'Invalid Amount', description: 'Enter an amount of at least ₹1', variant: 'destructive' });
                               return;
                             }
                             const updated = { ...cms };

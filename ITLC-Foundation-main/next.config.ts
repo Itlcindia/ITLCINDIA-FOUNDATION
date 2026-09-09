@@ -43,6 +43,23 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/site-map',
+        destination: '/sitemap',
+        permanent: true,
+      },
+    ];
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/sitemap',
+        destination: '/sitemap-page',
+      },
+    ];
+  },
 };
 
 export default nextConfig;

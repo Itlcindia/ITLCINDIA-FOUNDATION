@@ -14,7 +14,9 @@ import {
   Loader2,
   Download,
   Sparkles,
-  CreditCard
+  CreditCard,
+  AlertCircle,
+  RotateCcw
 } from 'lucide-react';
 import { useDonationModal } from '@/context/donation-modal-context';
 import { downloadReceiptPdf, printReceiptInvoice } from '@/lib/donation-receipt';
@@ -89,6 +91,12 @@ export function DonationModal() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const [paymentError, setPaymentError] = useState<{
+    show: boolean;
+    title: string;
+    subMessage: string;
+    message: string;
+  } | null>(null);
   const [errors, setErrors] = useState<{ name?: string; email?: string; amount?: string }>({});
 
   // Receipt Details after success
@@ -123,6 +131,7 @@ export function DonationModal() {
     if (!isOpen) {
       const timer = setTimeout(() => {
         setIsSuccess(false);
+        setPaymentError(null);
         setReceiptDetails(null);
         setErrors({});
       }, 300);
@@ -163,8 +172,8 @@ export function DonationModal() {
       newErrors.email = 'Please enter a valid email address';
     }
 
-    if (!amount || amount < 10) {
-      newErrors.amount = 'Minimum donation amount is ₹10';
+    if (!amount || amount < 1) {
+      newErrors.amount = 'Minimum donation amount is ₹1';
     }
 
     setErrors(newErrors);
@@ -191,7 +200,7 @@ export function DonationModal() {
             body: JSON.stringify({
               donor_name: fullName.trim(),
               donor_email: email.trim(),
-              donor_phone: '9336188402',
+              donor_phone: '',
               amount: amount,
               type: isMonthly ? 'monthly' : 'one-time',
               payment_id: confirmedPaymentId,
@@ -208,7 +217,7 @@ export function DonationModal() {
           type: isMonthly ? 'Monthly Support' : 'One-time Donation',
           donorName: fullName.trim(),
           donorEmail: email.trim(),
-          donorPhone: '9336188402',
+          donorPhone: '',
           date: new Date().toLocaleDateString('en-IN', {
             day: 'numeric',
             month: 'long',
@@ -231,90 +240,118 @@ export function DonationModal() {
         }, 400);
       };
 
-      // 1. Create order on backend with Razorpay (Step 1: POST /api/create-order)
+      // 1. Create order on backend with Razorpay (POST /api/donation/create-order)
       let orderData: any = null;
       try {
-        const orderRes = await fetch('/api/create-order', {
+        const orderRes = await fetch('/api/donation/create-order', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            amount: Math.round(Number(amount) * 100), // in paise (minimum 100 paise)
-            currency: 'INR',
-            receipt: `rcpt_${Date.now().toString(36)}`,
-            notes: {
-              donor_name: fullName.trim(),
-              donor_email: email.trim(),
-              donation_type: isMonthly ? 'monthly' : 'one-time',
-            },
+            amount: Number(amount),
+            donorName: fullName.trim(),
+            donorEmail: email.trim(),
+            donorPhone: '',
+            type: isMonthly ? 'monthly' : 'one-time',
           }),
         });
 
-        if (orderRes.ok) {
-          orderData = await orderRes.json();
-        } else {
-          const errData = await orderRes.json().catch(() => ({}));
-          throw new Error(errData.error || 'Failed to create Razorpay order');
+        orderData = await orderRes.json().catch(() => ({}));
+
+        if (!orderRes.ok || !orderData.success) {
+          throw new Error(orderData.message || orderData.error || 'Failed to create payment order');
         }
       } catch (orderErr: any) {
         console.error('Could not create Razorpay order:', orderErr);
         setIsLoading(false);
-        alert(orderErr?.message || 'Could not initiate payment order. Please try again.');
+        setPaymentError({
+          show: true,
+          title: 'Sorry for the inconvenience',
+          subMessage: 'Aapke account se koi paise nahi kate hain.',
+          message:
+            'Payment gateway se sampark nahi ho saka. Aapke account se koi charge nahi hua hai. Kripya punah prayas karein.',
+        });
         return;
       }
 
-      // 2. Load Razorpay Checkout SDK (Step 2: Frontend Checkout)
+      // 2. Load Razorpay Checkout SDK (Frontend Checkout)
       const isSdkLoaded = await loadRazorpaySdk();
       if (!isSdkLoaded || !(window as any).Razorpay) {
         setIsLoading(false);
-        alert('Payment gateway SDK could not be loaded. Please check your internet connection.');
+        setPaymentError({
+          show: true,
+          title: 'Sorry for the inconvenience',
+          subMessage: 'Aapke account se koi paise nahi kate hain.',
+          message:
+            'Payment gateway load nahi ho saka. Kripya apna internet connection check karein ya thodi der baad prayas karein.',
+        });
         return;
       }
 
       // 3. Open Razorpay Checkout modal
+      const keyToUse = orderData.key || orderData.key_id || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || '';
+      const orderIdToUse = orderData.order?.id || orderData.order_id || undefined;
+      const amountPaise = orderData.order?.amount || Math.round(Number(amount) * 100);
+
       const options: any = {
-        key: orderData.key_id || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || '',
-        amount: orderData.amount,
-        currency: orderData.currency || 'INR',
+        key: keyToUse,
+        amount: amountPaise,
+        currency: orderData.order?.currency || 'INR',
         name: 'ITLC Foundation',
-        description: isMonthly ? 'Monthly Support Donation' : 'Section 80G Tax-Exempt Contribution',
+        description: isMonthly ? 'Monthly Support Contribution (80G)' : 'Donation (Section 80G Tax Exempt)',
         image: modalConfig?.logoImage || '/ref/logo.png',
-        order_id: orderData.order_id,
-        handler: async function (response: any) {
+        order_id: orderIdToUse,
+        handler: async function (paymentResponse: any) {
           setIsLoading(true);
           try {
-            // STEP 3: Verify signature on backend (POST /api/verify-payment)
-            const verifyRes = await fetch('/api/verify-payment', {
+            // STEP 3: Verify signature on backend (POST /api/donation/verify-payment)
+            const verifyRes = await fetch('/api/donation/verify-payment', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id || orderData.order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                amount: amount,
+                ...paymentResponse,
+                amount: Number(amount),
+                donorName: fullName.trim(),
+                donorEmail: email.trim(),
+                donorPhone: '',
                 donor_name: fullName.trim(),
                 donor_email: email.trim(),
-                donor_phone: '9336188402',
+                donor_phone: '',
                 type: isMonthly ? 'monthly' : 'one-time',
               }),
             });
 
             const verifyData = await verifyRes.json().catch(() => ({}));
             if (verifyRes.ok && verifyData.success) {
-              await finalizeDonation(response.razorpay_payment_id, verifyData.receipt_no);
+              const paymentId = paymentResponse.razorpay_payment_id || verifyData.payment_id || verifyData.paymentId;
+              const receiptNo = verifyData.receipt_no || verifyData.receiptNo;
+              await finalizeDonation(paymentId, receiptNo);
             } else {
               setIsLoading(false);
-              alert(verifyData.error || 'Payment signature verification failed. Please contact support.');
+              setPaymentError({
+                show: true,
+                title: 'Sorry for the inconvenience',
+                subMessage: 'Payment confirm nahi ho saki - Amount refund safe hai.',
+                message:
+                  verifyData.message ||
+                  'Website par payment confirmation me samasya aayi. Agar aapke bank se amount debit hua hai to wo turant auto-refund ho jayega.',
+              });
             }
           } catch (verifyErr) {
             console.error('Error during signature verification:', verifyErr);
             setIsLoading(false);
-            alert('Payment verification failed. Please contact support.');
+            setPaymentError({
+              show: true,
+              title: 'Sorry for the inconvenience',
+              subMessage: 'Aapka transaction safe hai.',
+              message:
+                'Payment verification ke waqt network samasya aayi. Agar aapka amount deduct hua hai to wo safe hai aur aapko confirmation email mil jayega ya bank me auto-reverse ho jayega.',
+            });
           }
         },
         prefill: {
           name: fullName.trim(),
           email: email.trim(),
-          contact: '9336188402',
+          contact: '',
         },
         theme: {
           color: '#168039',
@@ -329,15 +366,25 @@ export function DonationModal() {
       const rzp = new (window as any).Razorpay(options);
       rzp.on('payment.failed', function (errResp: any) {
         setIsLoading(false);
-        const errorMsg = errResp?.error?.description || 'Payment was unsuccessful. Please try again.';
+        const errorDesc = errResp?.error?.description || 'Payment bank level par process nahi ho saki.';
         console.error('Razorpay payment failed:', errResp);
-        alert(errorMsg);
+        setPaymentError({
+          show: true,
+          title: 'Sorry for the inconvenience',
+          subMessage: 'Payment complete nahi ho saki - Aapke paise safe hain.',
+          message: `${errorDesc} Aapke account se koi paise nahi kate hain. Agar bank se temporary debit dikhai de to wo 24-48 ghanto me reverse ho jayega.`,
+        });
       });
       rzp.open();
     } catch (err: any) {
       console.error('Donation payment error:', err);
       setIsLoading(false);
-      alert('An error occurred while processing the payment. Please try again.');
+      setPaymentError({
+        show: true,
+        title: 'Sorry for the inconvenience',
+        subMessage: 'Aapke account se paise nahi kate hain.',
+        message: 'Payment process karte waqt anapekshit truti aayi. Kripya punah prayas karein.',
+      });
     }
   };
 
@@ -394,19 +441,93 @@ export function DonationModal() {
             </span>
           </div>
           <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight">
-            {isSuccess ? (modalConfig?.successTitle || 'Donation Received') : (modalConfig?.title || 'Make a Difference Today')}
+            {paymentError?.show
+              ? 'Transaction Update'
+              : isSuccess
+              ? (modalConfig?.successTitle || 'Donation Received')
+              : (modalConfig?.title || 'Make a Difference Today')}
           </h2>
           <p className="text-xs sm:text-sm text-emerald-100 mt-1 max-w-sm mx-auto">
-            {isSuccess
+            {paymentError?.show
+              ? 'Aapka amount surakshit hai aur koi deduction nahi hua hai'
+              : isSuccess
               ? (modalConfig?.successSubtitle || 'Thank you for your generosity! Your receipt has been sent.')
               : (modalConfig?.subtitle || 'Empowering children, protecting nature & strengthening communities in UP.')}
           </p>
         </div>
 
         {/* ========================================================================= */}
-        {/* VIEW 1: PAYMENT FORM (FULL NAME + EMAIL + BARCODE + PROCEED TO PAY)      */}
+        {/* VIEW 0: COURTEOUS SORRY FOR THE INCONVENIENCE & MONEY SAFE VIEW           */}
         {/* ========================================================================= */}
-        {!isSuccess ? (
+        {paymentError && paymentError.show ? (
+          <div className="p-6 sm:p-7 text-center space-y-4 animate-in fade-in duration-300">
+            <div className="w-16 h-16 bg-amber-50 border-2 border-amber-200 text-amber-600 rounded-full flex items-center justify-center mx-auto shadow-xs">
+              <AlertCircle className="w-8 h-8" />
+            </div>
+
+            <div className="space-y-2">
+              <span className="inline-block bg-amber-100 text-amber-800 text-[11px] font-bold px-3 py-0.5 rounded-full uppercase tracking-wider">
+                Payment Incomplete
+              </span>
+              <h3 className="text-xl sm:text-2xl font-black text-gray-900 font-headline">
+                {paymentError.title}
+              </h3>
+              <div className="bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs sm:text-sm font-semibold rounded-2xl p-3.5 max-w-md mx-auto flex items-center justify-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-[#168039] shrink-0" />
+                <span>{paymentError.subMessage}</span>
+              </div>
+              <p className="text-xs sm:text-sm text-gray-600 leading-relaxed max-w-md mx-auto pt-1">
+                {paymentError.message}
+              </p>
+            </div>
+
+            {/* Safety Assurance Points */}
+            <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4 text-xs text-left text-gray-600 space-y-2 max-w-md mx-auto">
+              <div className="font-bold text-gray-900 flex items-center gap-1.5">
+                <span>🛡️ Security Guarantee:</span>
+              </div>
+              <ul className="list-disc list-inside space-y-1 text-[11px] text-gray-600">
+                <li>Jab tak website se payment confirm nahi hoti, transaction capture nahi hota.</li>
+                <li>Agar bank se temporary deduction message aaya hai, to bank automatically 24 se 48 ghanto me reverse kar deta hai.</li>
+                <li>Aap bina kisi dar ke dubara koshish kar sakte hain.</li>
+              </ul>
+            </div>
+
+            {/* Recovery Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 pt-2 max-w-md mx-auto">
+              <button
+                type="button"
+                onClick={() => {
+                  setPaymentError(null);
+                  setIsLoading(false);
+                }}
+                className="flex-1 bg-[#168039] hover:bg-[#137233] text-white py-3.5 px-5 rounded-2xl font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2"
+              >
+                <RotateCcw className="w-4 h-4" />
+                <span>Try Again</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={closeDonationModal}
+                className="flex-1 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 py-3.5 px-5 rounded-2xl font-semibold text-xs sm:text-sm transition-all cursor-pointer flex items-center justify-center gap-2 shadow-xs"
+              >
+                <X className="w-4 h-4 text-gray-500" />
+                <span>Close</span>
+              </button>
+            </div>
+
+            <p className="text-[11px] text-gray-500">
+              Need assistance? Email support:{' '}
+              <a
+                href="mailto:support@itlcfoundation.com"
+                className="font-bold text-[#168039] hover:underline"
+              >
+                support@itlcfoundation.com
+              </a>
+            </p>
+          </div>
+        ) : !isSuccess ? (
           <form onSubmit={handlePayment} className="p-6 sm:p-7 space-y-4">
             
             {/* 1. Frequency Tabs (One-time vs Monthly side by side) */}
@@ -546,52 +667,7 @@ export function DonationModal() {
               </div>
             </div>
 
-            {/* 4. Official UPI Barcode Section (Dynamic from Admin CMS) */}
-            <div className="bg-gradient-to-br from-emerald-50/90 via-white to-emerald-50/50 border-2 border-emerald-200/90 rounded-2xl p-3.5 shadow-2xs space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs font-bold text-[#083a27]">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <span>{modalConfig?.qrTitle || 'Official UPI Barcode Payment'}</span>
-                </div>
-                <span className="text-[10px] font-bold bg-[#168039] text-white px-2.5 py-0.5 rounded-full shadow-2xs">
-                  80G Certified
-                </span>
-              </div>
-
-              <div className="flex items-center gap-3.5 bg-white p-3 rounded-xl border border-emerald-100 shadow-2xs">
-                {/* Barcode QR Image (Managed from Admin) */}
-                <div className="relative w-24 h-24 sm:w-28 sm:h-28 bg-white p-1 rounded-xl border border-gray-200 shrink-0 shadow-xs">
-                  <Image
-                    src={modalConfig?.qrImage || '/qr.png'}
-                    alt="ITLC Foundation UPI Barcode"
-                    fill
-                    sizes="112px"
-                    className="object-contain p-0.5 rounded-lg"
-                  />
-                </div>
-
-                {/* Info & Instructions */}
-                <div className="space-y-1.5 flex-1 min-w-0">
-                  <div className="text-xs font-bold text-gray-900">
-                    Scan Barcode to Pay <span className="text-[#168039] font-black text-sm">₹{amount.toLocaleString('en-IN')}</span>
-                  </div>
-                  <p className="text-[11px] text-gray-500 leading-snug">
-                    {modalConfig?.qrDescription || 'Scan using Google Pay, PhonePe, Paytm, or BHIM. Or click below to proceed with Gateway / Cards / UPI.'}
-                  </p>
-                  <div className="flex flex-wrap items-center gap-1 pt-0.5">
-                    <span className="text-[10px] bg-gray-100 text-gray-700 font-bold px-2 py-0.5 rounded-md">GPay</span>
-                    <span className="text-[10px] bg-purple-50 text-purple-700 font-bold px-2 py-0.5 rounded-md">PhonePe</span>
-                    <span className="text-[10px] bg-blue-50 text-blue-700 font-bold px-2 py-0.5 rounded-md">Paytm</span>
-                    <span className="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded-md">BHIM</span>
-                  </div>
-                  <div className="text-[10px] text-gray-400 font-mono pt-0.5">
-                    UPI ID: <span className="font-semibold text-gray-600">{modalConfig?.upiId || 'itlc@upi'}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* 5. Tax Exemption & Security Badge */}
+            {/* 4. Tax Exemption & Security Badge */}
             <div className="flex items-center gap-2 bg-emerald-50/70 border border-emerald-100 rounded-xl p-2.5 text-[11px] text-emerald-900">
               <ShieldCheck className="w-4 h-4 text-[#168039] shrink-0" />
               <span>

@@ -28,6 +28,7 @@ const donationRoutes = require('./routes/donations');
 app.use('/api/auth', authRoutes);
 app.use('/api/content', contentRoutes);
 app.use('/api/donations', donationRoutes);
+app.use('/api/donation', donationRoutes);
 
 // Health Check Endpoint
 app.get('/api/health', (req, res) => {

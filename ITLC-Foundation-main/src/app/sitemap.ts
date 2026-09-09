@@ -28,7 +28,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/disclaimer', priority: 0.5, changeFrequency: 'yearly' },
     { path: '/cookie-policy', priority: 0.5, changeFrequency: 'yearly' },
     { path: '/refund-policy', priority: 0.5, changeFrequency: 'yearly' },
-    { path: '/site-map', priority: 0.5, changeFrequency: 'monthly' },
+    { path: '/sitemap', priority: 0.5, changeFrequency: 'monthly' },
   ];
 
   const staticEntries: MetadataRoute.Sitemap = staticRoutes.map((r) => ({

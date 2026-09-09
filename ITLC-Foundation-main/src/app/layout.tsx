@@ -48,6 +48,9 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/icon.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
+        {/* Razorpay Standard Checkout Gateway Script */}
+        <script async src="https://checkout.razorpay.com/v1/checkout.js" />
+
         {/* Google Search Console Verification */}
         <meta name="google-site-verification" content="PGhV84C11AofLbbgcqGSqWfOF6Su5x10bykyx3E3Ptg" />
 

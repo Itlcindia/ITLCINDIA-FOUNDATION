@@ -432,7 +432,7 @@
     "qrImage": "/qr.png",
     "qrTitle": "Official UPI Barcode Payment",
     "qrDescription": "Scan using Google Pay, PhonePe, Paytm, or BHIM. Or click below to proceed with Gateway / Cards / UPI.",
-    "upiId": "itlcpankaj@upi",
+    "upiId": "itlcpankajk@upi",
     "presetAmounts": [
       500,
       1000,
