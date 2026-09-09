@@ -1,0 +1,14 @@
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+# 1. Allow existing static files to serve directly
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# 2. Reverse proxy Root URL to Next.js (port 3000)
+RewriteRule ^$ http://127.0.0.1:3000/ [P,L]
+
+# 3. Reverse proxy all dynamic routes and API requests to Next.js
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ http://127.0.0.1:3000/ [P,L]

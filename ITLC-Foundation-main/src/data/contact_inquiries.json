@@ -1,0 +1,24 @@
+[
+  {
+    "id": "inq-1",
+    "name": "Dr. Alok Srivastava",
+    "email": "alok.srivastava@lucknowuni.ac.in",
+    "phone": "+91 94150 12345",
+    "subject": "CSR Tree Plantation Partnership for Campus",
+    "message": "Greetings from University of Lucknow. We would like to partner with ITLC Foundation for our monsoon plantation drive to plant 2,000 native neem and peepal trees across campus.",
+    "status": "new",
+    "admin_notes": "High priority education campus partnership.",
+    "created_at": "2026-09-08 09:45:00"
+  },
+  {
+    "id": "inq-2",
+    "name": "Ritu Agarwal",
+    "email": "ritu.agarwal@gmail.com",
+    "phone": "+91 98390 56789",
+    "subject": "Donating Sewing Machines to Women Center",
+    "message": "Hello ITLC Team, I wish to donate 5 industrial sewing machines to your women vocational training center in rural Lucknow.",
+    "status": "replied",
+    "admin_notes": "Replied with delivery address and center manager phone number.",
+    "created_at": "2026-09-07 15:30:00"
+  }
+]

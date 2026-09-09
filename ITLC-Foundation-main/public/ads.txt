@@ -1,0 +1,2 @@
+# Google AdSense Authorization file for ITLC Foundation (itlcfoundation.com / itlcfoundation.org)
+google.com, pub-5020716602157264, DIRECT, f08c47fec0942fa0

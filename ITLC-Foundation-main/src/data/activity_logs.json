@@ -1,0 +1,32 @@
+[
+  {
+    "id": "log-1",
+    "admin_username": "admin",
+    "role": "super_admin",
+    "action": "SYSTEM_BOOT",
+    "entity_type": "System",
+    "entity_title": "ITLC Foundation Control Portal Initialized",
+    "ip_address": "127.0.0.1",
+    "created_at": "2026-09-08 09:15:53"
+  },
+  {
+    "id": "log-2",
+    "admin_username": "admin",
+    "role": "super_admin",
+    "action": "UPDATE_PROJECT",
+    "entity_type": "Project",
+    "entity_title": "Tree Plantation & Green Lucknow Drive",
+    "ip_address": "127.0.0.1",
+    "created_at": "2026-09-08 08:15:53"
+  },
+  {
+    "id": "log-3",
+    "admin_username": "editor_lucknow",
+    "role": "content_editor",
+    "action": "PUBLISH_BLOG",
+    "entity_type": "Blog",
+    "entity_title": "Environmental Protection in Uttar Pradesh",
+    "ip_address": "192.168.1.15",
+    "created_at": "2026-09-08 07:15:53"
+  }
+]

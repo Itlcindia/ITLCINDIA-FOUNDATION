@@ -1,0 +1,39 @@
+[
+  {
+    "id": "team-1",
+    "name": "Pankaj Kumar",
+    "designation": "Founder & Managing Trustee",
+    "image": "/pro/ab.png",
+    "bio": "Lifelong environmental advocate and humanitarian dedicated to uplifting underprivileged families and animals in UP.",
+    "social_links": {
+      "linkedin": "#",
+      "twitter": "#"
+    },
+    "sort_order": 1,
+    "is_active": true
+  },
+  {
+    "id": "team-2",
+    "name": "Sunita Sharma",
+    "designation": "Head of Women Empowerment Wing",
+    "image": "/pro/ser.png",
+    "bio": "Leading livelihood initiatives, self-help groups, and sewing skill workshops across rural Lucknow.",
+    "social_links": {
+      "linkedin": "#"
+    },
+    "sort_order": 2,
+    "is_active": true
+  },
+  {
+    "id": "team-3",
+    "name": "Dr. R. K. Verma",
+    "designation": "Chief Veterinary Officer",
+    "image": "/pro/ani.png",
+    "bio": "Veterinary doctor directing mobile ambulance units, emergency rescues, and rabies vaccination camps.",
+    "social_links": {
+      "twitter": "#"
+    },
+    "sort_order": 3,
+    "is_active": true
+  }
+]

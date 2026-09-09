@@ -1,0 +1,100 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero-1",
+      "description": "A group of volunteers planting a tree together.",
+      "imageUrl": "https://images.unsplash.com/photo-1765018028697-2baae4577cdd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHx2b2x1bnRlZXJzJTIwY29tbXVuaXR5fGVufDB8fHx8MTc3MTgzODQwNnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "volunteers community"
+    },
+    {
+      "id": "gallery-event-1",
+      "description": "Food distribution event to needy families.",
+      "imageUrl": "/gal/b.png",
+      "imageHint": "charity food"
+    },
+    {
+      "id": "gallery-event-2",
+      "description": "Volunteers distributing blankets in winter.",
+      "imageUrl": "/gal/e.png",
+      "imageHint": "winter charity"
+    },
+    {
+      "id": "gallery-event-3",
+      "description": "A community gathering for an awareness program.",
+      "imageUrl": "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxjb21tdW5pdHklMjBldmVudHxlbnwwfHx8fDA%3D&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "community event"
+    },
+    {
+      "id": "gallery-plantation-1",
+      "description": "A young child watering a newly planted sapling.",
+      "imageUrl": "https://images.unsplash.com/photo-1584062134595-dacde0a2336d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxjaGlsZCUyMHBsYW50aW5nfGVufDB8fHx8MTc3MTgzODQwNnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "child planting"
+    },
+    {
+      "id": "gallery-plantation-2",
+      "description": "A dense area of freshly planted trees.",
+      "imageUrl": "/gal/c.png",
+      "imageHint": "tree plantation"
+    },
+    {
+      "id": "gallery-plantation-3",
+      "description": "Volunteers posing after a successful plantation drive.",
+      "imageUrl": "https://images.unsplash.com/photo-1758599668429-121d54188b9c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHx2b2x1bnRlZXJzJTIwZ3JvdXB8ZW58MHx8fHwxNzc1NTg5NTAwfDA%3D&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "volunteers group"
+    },
+    {
+      "id": "gallery-welfare-1",
+      "description": "A volunteer handing a school kit to a child.",
+      "imageUrl": "/gal/a.png",
+      "imageHint": "education children"
+    },
+    {
+      "id": "gallery-welfare-2",
+      "description": "Bags of ration ready for distribution.",
+      "imageUrl": "/gal/g.png",
+      "imageHint": "food aid"
+    },
+    {
+      "id": "gallery-welfare-3",
+      "description": "An elderly person receiving aid.",
+      "imageUrl": "https://images.unsplash.com/photo-1758612898715-a354d0e62a03?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxlbGRlcmx5JTIwaGVscHxlbnwwfHx8fDA%3D&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "elderly help"
+    },
+    {
+      "id": "gallery-animal-1",
+      "description": "A volunteer feeding a stray dog.",
+      "imageUrl": "/gal/d.png",
+      "imageHint": "feeding dog"
+    },
+    {
+      "id": "gallery-animal-2",
+      "description": "A rescued kitten being cared for.",
+      "imageUrl": "/gal/f.png",
+      "imageHint": "rescue kitten"
+    },
+    {
+      "id": "gallery-animal-3",
+      "description": "A mobile medical van for animal treatment.",
+      "imageUrl": "https://images.unsplash.com/photo-1626511140389-f1fa321c4618?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxhbmltYWwlMjBhbWJ1bGFuY2V8ZW58MHx8fHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "animal ambulance"
+    },
+    {
+      "id": "blog-1",
+      "description": "Close up on a tree sapling.",
+      "imageUrl": "https://images.unsplash.com/photo-1638432546372-7c6adf2ec9f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHx0cmVlJTIwc2FwbGluZ3xlbnwwfHx8fDE3NzE4Mzg0MDZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "tree sapling"
+    },
+    {
+      "id": "blog-2",
+      "description": "A stray dog looking at the camera.",
+      "imageUrl": "/gal/f.png",
+      "imageHint": "stray dog"
+    },
+    {
+      "id": "blog-3",
+      "description": "A group of people from a community.",
+      "imageUrl": "/gal/g.png",
+      "imageHint": "community people"
+    }
+  ]
+}
