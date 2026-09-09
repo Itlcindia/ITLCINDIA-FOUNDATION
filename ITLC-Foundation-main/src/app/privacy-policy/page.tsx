@@ -137,7 +137,7 @@ export default function PrivacyPolicyPage() {
               </p>
               <p className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-[#168039] shrink-0" />
-                <span>Email: <a href="mailto:info@itlcfoundation.org" className="text-[#168039] font-medium hover:underline">info@itlcfoundation.org</a> / <a href="mailto:donation@itlcfoundation.com" className="text-[#168039] font-medium hover:underline">donation@itlcfoundation.com</a></span>
+                <span>Email: <a href="mailto:info@itlcfoundation.com" className="text-[#168039] font-medium hover:underline">info@itlcfoundation.com</a> / <a href="mailto:donation@itlcfoundation.com" className="text-[#168039] font-medium hover:underline">donation@itlcfoundation.com</a></span>
               </p>
             </div>
           </section>

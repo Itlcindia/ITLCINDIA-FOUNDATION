@@ -14,6 +14,18 @@ import { DonationModal } from '@/components/donation/donation-modal';
 export const metadata: Metadata = {
   title: 'ITLC Foundation Hub',
   description: 'Serving Humanity. Protecting Nature. Saving Lives.',
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/icon.png', type: 'image/png', sizes: '32x32' },
+      { url: '/favicon.png', type: 'image/png', sizes: '32x32' },
+      { url: '/ref/logo.png', type: 'image/png' },
+    ],
+    shortcut: '/favicon.ico',
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
   verification: {
     google: 'PGhV84C11AofLbbgcqGSqWfOF6Su5x10bykyx3E3Ptg',
   },
@@ -30,6 +42,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Favicon & Web Icons */}
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/icon.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
         {/* Google Search Console Verification */}
         <meta name="google-site-verification" content="PGhV84C11AofLbbgcqGSqWfOF6Su5x10bykyx3E3Ptg" />
 

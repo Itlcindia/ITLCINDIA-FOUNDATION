@@ -65,7 +65,7 @@ export function DonationModal() {
 
   // Fetch dynamic CMS configuration
   useEffect(() => {
-    fetch('/api/content/cms')
+    fetch('/api/content/cms', { cache: 'no-store' })
       .then(res => res.json())
       .then(data => {
         if (data?.donationModal) {
@@ -76,7 +76,7 @@ export function DonationModal() {
         }
       })
       .catch(err => console.warn('Could not fetch modal cms config:', err));
-  }, [initialAmount]);
+  }, [initialAmount, isOpen]);
 
   // Form states
   const [isMonthly, setIsMonthly] = useState<boolean>(false);
@@ -503,7 +503,7 @@ export function DonationModal() {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Kumar"
+                    placeholder=""
                     value={fullName}
                     onChange={(e) => {
                       setFullName(e.target.value);
@@ -529,7 +529,7 @@ export function DonationModal() {
                   <input
                     type="email"
                     required
-                    placeholder="pankajkumarpreet4@gmail.com (For 80G Receipt)"
+                    placeholder=""
                     value={email}
                     onChange={(e) => {
                       setEmail(e.target.value);

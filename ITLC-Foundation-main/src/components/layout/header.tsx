@@ -17,7 +17,6 @@ import {
 } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import { useDonationModal } from '@/context/donation-modal-context';
-import initialCmsData from '@/data/cms_data.json';
 
 interface NavItem {
   label: string;
@@ -53,7 +52,19 @@ export function Header() {
   const [isMobileCausesOpen, setIsMobileCausesOpen] = useState(false);
   const causesRef = useRef<HTMLDivElement>(null);
   const { openDonationModal } = useDonationModal();
-  const [logo, setLogo] = useState<string>((initialCmsData as any)?.site?.logo || '/ref/logo.png');
+  const [logo, setLogo] = useState<string>('/ref/logo.png');
+
+  useEffect(() => {
+    fetch('/api/content/cms', { cache: 'no-store' })
+      .then((res) => {
+        if (!res.ok) return null;
+        return res.json();
+      })
+      .then((data) => {
+        if (data?.site?.logo) setLogo(data.site.logo);
+      })
+      .catch(() => {});
+  }, []);
 
   // Pre-warm all key landing page routes for instant navigation transitions
   useEffect(() => {

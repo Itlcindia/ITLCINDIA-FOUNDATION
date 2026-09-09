@@ -77,7 +77,7 @@ export function generatePdfBlob(details: DonationReceiptDetails): Blob {
   stream += '/F2 9 Tf\n';
   stream += '0.85 0.95 0.90 rg\n';
   stream += '40 750 Td (Registered Office: G1/0049, Olive Wood Villa, Golf City, Lucknow, UP - 226030) Tj\n';
-  stream += '40 738 Td (Website: itlcfoundation.org | Contact: info@itlcfoundation.org | Helpline: +91 93361 88402) Tj\n';
+  stream += '40 738 Td (Website: itlcfoundation.org | Contact: info@itlcfoundation.com | Helpline: +91 93361 88402) Tj\n';
   stream += 'ET\n';
 
   // Title: Official Donation Receipt (80G)
@@ -311,7 +311,7 @@ export function printReceiptInvoice(details: DonationReceiptDetails) {
       <h1>ITLC FOUNDATION</h1>
       <p>Empowering Communities Through Learning & Care &bull; Registered Public Charitable Trust</p>
       <div class="addr">G1/0049, Olive Wood Villa, Golf City, Lucknow, Uttar Pradesh – 226030</div>
-      <div class="addr">Email: info@itlcfoundation.org | Helpline: +91 93361 88402 | Web: itlcfoundation.org</div>
+      <div class="addr">Email: info@itlcfoundation.com | Helpline: +91 93361 88402 | Web: itlcfoundation.org</div>
     </div>
     <div class="content">
       <div style="text-align: center;">

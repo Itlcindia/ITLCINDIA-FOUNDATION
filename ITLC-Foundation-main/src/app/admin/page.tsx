@@ -32,7 +32,7 @@ export default function AdminPage() {
   // Authentication states
   const [token, setToken] = useState<string | null>(null);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [adminEmail, setAdminEmail] = useState('info@itlcfoundation.com');
+  const [adminEmail, setAdminEmail] = useState('');
   const [adminPassword, setAdminPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loginMode, setLoginMode] = useState<'password' | 'otp' | 'forgot_password'>('password');
@@ -147,7 +147,6 @@ export default function AdminPage() {
           username: data.username || 'admin',
           role: data.role || 'super_admin',
         });
-        setAdminEmail(data.adminEmail);
         setNewAdminEmailInput(data.adminEmail);
       }
     } catch (err) {}
@@ -167,10 +166,10 @@ export default function AdminPage() {
     const savedEmail = localStorage.getItem('adminEmail');
     if (savedToken) {
       setToken(savedToken);
-    }
-    if (savedEmail) {
-      setAdminEmail(savedEmail);
-      setNewAdminEmailInput(savedEmail);
+      if (savedEmail) {
+        setAdminEmail(savedEmail);
+        setNewAdminEmailInput(savedEmail);
+      }
     }
     fetchAdminProfile();
     fetchCmsData();
@@ -796,10 +795,6 @@ export default function AdminPage() {
             <h1 className="text-xl font-black text-gray-900 font-headline uppercase tracking-wider">
               ITLC FOUNDATION
             </h1>
-            <p className="text-xs text-[#168039] font-bold mt-0.5 flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Admin Portal &bull; info@itlcfoundation.com</span>
-            </p>
           </div>
 
           {/* Mode Switcher Tabs (Only shown when not resetting password) */}
@@ -853,12 +848,11 @@ export default function AdminPage() {
                     required
                     value={adminEmail}
                     onChange={(e) => setAdminEmail(e.target.value)}
-                    placeholder="info@itlcfoundation.com"
+                    placeholder=""
                     className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 text-sm font-medium outline-none focus:border-[#168039] focus:ring-1 focus:ring-[#168039]"
                   />
                   <Mail className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 </div>
-                <p className="text-[10px] text-gray-400 mt-1">Default SuperAdmin: info@itlcfoundation.com</p>
               </div>
 
               <div>
@@ -926,7 +920,7 @@ export default function AdminPage() {
                       required
                       value={adminEmail}
                       onChange={(e) => setAdminEmail(e.target.value)}
-                      placeholder="info@itlcfoundation.com"
+                      placeholder=""
                       className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-gray-300 text-xs font-medium outline-none focus:border-[#168039]"
                     />
                     <Mail className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -941,17 +935,6 @@ export default function AdminPage() {
                     <span>{otpCountdown > 0 ? `${otpCountdown}s` : 'Send OTP'}</span>
                   </button>
                 </div>
-                {otpSentMessage && (
-                  <div className="mt-2 bg-emerald-50/90 border border-emerald-200 rounded-xl p-2.5 text-center">
-                    <p className="text-xs text-[#168039] font-semibold flex items-center justify-center gap-1.5">
-                      <CheckCircle2 className="w-4 h-4 shrink-0 text-[#168039]" />
-                      <span>{otpSentMessage}</span>
-                    </p>
-                    <p className="text-[11px] text-gray-500 mt-0.5">
-                      Please check your email inbox (or spam folder) for the 6-digit verification code.
-                    </p>
-                  </div>
-                )}
               </div>
 
               <div>
@@ -1006,7 +989,7 @@ export default function AdminPage() {
                       required
                       value={adminEmail}
                       onChange={(e) => setAdminEmail(e.target.value)}
-                      placeholder="info@itlcfoundation.com"
+                      placeholder=""
                       className="w-full pl-9 pr-3 py-2 rounded-xl border border-gray-300 text-xs font-medium outline-none focus:border-[#168039]"
                     />
                     <Mail className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -1021,17 +1004,6 @@ export default function AdminPage() {
                     <span>{otpCountdown > 0 ? `${otpCountdown}s` : 'Get Code'}</span>
                   </button>
                 </div>
-                {otpSentMessage && (
-                  <div className="mt-2 bg-emerald-50/90 border border-emerald-200 rounded-xl p-2 text-center">
-                    <p className="text-xs text-[#168039] font-semibold flex items-center justify-center gap-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5 shrink-0 text-[#168039]" />
-                      <span>{otpSentMessage}</span>
-                    </p>
-                    <p className="text-[10px] text-gray-500 mt-0.5">
-                      Check your email inbox (or spam folder) for the 6-digit reset code.
-                    </p>
-                  </div>
-                )}
               </div>
 
               <div>
@@ -3112,6 +3084,18 @@ export default function AdminPage() {
                       />
                     </div>
                   </div>
+
+                  <div className="pt-4 border-t border-gray-100 flex items-center justify-end">
+                    <button
+                      type="button"
+                      disabled={isSaving}
+                      onClick={() => saveCmsData()}
+                      className="bg-[#168039] hover:bg-[#137233] text-white px-7 py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all shadow-md flex items-center gap-2 cursor-pointer"
+                    >
+                      {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                      <span>Save Contact Details</span>
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -3170,29 +3154,33 @@ export default function AdminPage() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      <ImageUploadField
-                        label="Donate Page Side Image"
-                        value={cms.donate.sideImage}
-                        onChange={(url) => {
-                          const updated = { ...cms };
-                          updated.donate.sideImage = url;
-                          setCms(updated);
-                        }}
-                        aspect="square"
-                      />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                      <div className="min-w-0">
+                        <ImageUploadField
+                          label="Donate Page Side Image"
+                          value={cms.donate.sideImage}
+                          onChange={(url) => {
+                            const updated = { ...cms };
+                            updated.donate.sideImage = url;
+                            setCms(updated);
+                          }}
+                          aspect="square"
+                        />
+                      </div>
 
-                      <ImageUploadField
-                        label="Official UPI QR Code Image"
-                        hint="Displayed on /donate for instant scanning"
-                        value={cms.donate.qrImage}
-                        onChange={(url) => {
-                          const updated = { ...cms };
-                          updated.donate.qrImage = url;
-                          setCms(updated);
-                        }}
-                        aspect="square"
-                      />
+                      <div className="min-w-0">
+                        <ImageUploadField
+                          label="Official UPI QR Code Image"
+                          hint="Displayed on /donate for instant scanning"
+                          value={cms.donate.qrImage}
+                          onChange={(url) => {
+                            const updated = { ...cms };
+                            updated.donate.qrImage = url;
+                            setCms(updated);
+                          }}
+                          aspect="square"
+                        />
+                      </div>
                     </div>
 
                     {/* FAQs */}
@@ -3275,21 +3263,23 @@ export default function AdminPage() {
                       <p className="text-[11px] text-gray-500">Upload your custom QR barcode directly from your phone/computer or media gallery.</p>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      <ImageUploadField
-                        label="Official UPI Barcode / QR Code Image"
-                        hint="Displayed inside the popup modal for instant scanning via GPay, PhonePe, Paytm, BHIM"
-                        value={cms.donationModal?.qrImage || '/qr.png'}
-                        onChange={(url) => {
-                          const updated = { ...cms };
-                          if (!updated.donationModal) updated.donationModal = {};
-                          updated.donationModal.qrImage = url;
-                          setCms(updated);
-                        }}
-                        aspect="square"
-                      />
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                      <div className="min-w-0">
+                        <ImageUploadField
+                          label="Official UPI Barcode / QR Code Image"
+                          hint="Displayed inside the popup modal for instant scanning via GPay, PhonePe, Paytm, BHIM"
+                          value={cms.donationModal?.qrImage || '/qr.png'}
+                          onChange={(url) => {
+                            const updated = { ...cms };
+                            if (!updated.donationModal) updated.donationModal = {};
+                            updated.donationModal.qrImage = url;
+                            setCms(updated);
+                          }}
+                          aspect="square"
+                        />
+                      </div>
 
-                      <div className="space-y-4">
+                      <div className="space-y-4 min-w-0">
                         <div>
                           <label className="block text-xs font-bold text-gray-700 mb-1">Official UPI ID</label>
                           <input
@@ -3349,8 +3339,8 @@ export default function AdminPage() {
                       <p className="text-[11px] text-gray-500">Customize the top banner, logo icon, and purpose text of the donation popup.</p>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                      <div>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+                      <div className="min-w-0">
                         <ImageUploadField
                           label="Header Brand Logo"
                           value={cms.donationModal?.logoImage || '/ref/logo.png'}
@@ -3364,7 +3354,7 @@ export default function AdminPage() {
                         />
                       </div>
 
-                      <div className="sm:col-span-2 space-y-4">
+                      <div className="lg:col-span-2 space-y-4 min-w-0">
                         <div>
                           <label className="block text-xs font-bold text-gray-700 mb-1">Modal Main Title</label>
                           <input
@@ -3550,8 +3540,8 @@ export default function AdminPage() {
                       <p className="text-[11px] text-gray-500">Configure what the donor sees after payment completion and automatic receipt slip generation.</p>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                      <div>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+                      <div className="min-w-0">
                         <ImageUploadField
                           label="Success Hero Photo"
                           hint="Photo shown on the thank-you confirmation card"
@@ -3566,7 +3556,7 @@ export default function AdminPage() {
                         />
                       </div>
 
-                      <div className="sm:col-span-2 space-y-4">
+                      <div className="lg:col-span-2 space-y-4 min-w-0">
                         <div>
                           <label className="block text-xs font-bold text-gray-700 mb-1">Success Heading</label>
                           <input
@@ -3728,6 +3718,18 @@ export default function AdminPage() {
                         className="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-xs outline-none"
                       />
                     </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-gray-100 flex items-center justify-end">
+                    <button
+                      type="button"
+                      disabled={isSaving}
+                      onClick={() => saveCmsData()}
+                      className="bg-[#168039] hover:bg-[#137233] text-white px-7 py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all shadow-md flex items-center gap-2 cursor-pointer"
+                    >
+                      {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                      <span>Save Footer Details</span>
+                    </button>
                   </div>
                 </div>
               )}
@@ -4417,7 +4419,7 @@ export default function AdminPage() {
               {/* TAB: WEBSITE INFO, LOGO & FAVICON                                         */}
               {/* ========================================================================= */}
               {activeTab === 'site-info' && (
-                <WebsiteInfoTab cms={cms} setCms={setCms} onSaveAll={() => saveCmsData()} />
+                <WebsiteInfoTab cms={cms} setCms={setCms} onSaveAll={(state) => saveCmsData(state || cms)} />
               )}
 
               {/* ========================================================================= */}

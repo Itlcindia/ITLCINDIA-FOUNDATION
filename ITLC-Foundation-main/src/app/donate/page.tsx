@@ -84,6 +84,7 @@ export default function DonatePage() {
   const [qrTitle, setQrTitle] = useState('Scan to Support Our NGO');
   const [qrDescription, setQrDescription] = useState('Quickly donate to our Lucknow projects via any UPI App');
   const [qrImageUrl, setQrImageUrl] = useState('/qr.png');
+  const [upiId, setUpiId] = useState('itlc@upi');
   const [transparencyText, setTransparencyText] = useState('Hum har donation ka proper utilization record maintain karte hain aur donors ko updates provide karte hain. Your trust is our biggest asset. As a top NGO in Lucknow, transparency is our priority.');
 
   useEffect(() => {
@@ -93,40 +94,29 @@ export default function DonatePage() {
     script.async = true;
     document.body.appendChild(script);
 
-    // Fetch dynamic FAQs
-    fetch(`${API_URL}/content/faqs?page=donate`)
+    // Fetch dynamic CMS donate content and FAQs
+    fetch('/api/content/cms', { cache: 'no-store' })
       .then((res) => {
-        if (!res.ok) throw new Error('Network error');
+        if (!res.ok) return null;
         return res.json();
       })
       .then((data) => {
-        if (data && Array.isArray(data) && data.length > 0) {
-          setFaqs(data.map((f) => ({ q: f.question, a: f.answer })));
+        if (data?.donate) {
+          const d = data.donate;
+          if (d.heading) setMainHeading(d.heading);
+          if (d.subheading) setMainSubheading(d.subheading);
+          if (d.sideImage) setSideImageUrl(d.sideImage);
+          if (d.qrTitle) setQrTitle(d.qrTitle);
+          if (d.qrDescription) setQrDescription(d.qrDescription);
+          if (d.qrImage) setQrImageUrl(d.qrImage);
+          if (d.upiId) setUpiId(d.upiId);
+          if (Array.isArray(d.faqs) && d.faqs.length > 0) {
+            setFaqs(d.faqs.map((f: any) => ({ q: f.question || f.q, a: f.answer || f.a })));
+          }
         }
       })
       .catch((err) => {
-        console.warn('Could not fetch dynamic FAQs for donate page, using fallback:', err);
-      });
-
-    // Fetch dynamic donate page content
-    fetch(`${API_URL}/content/donate-content`)
-      .then((res) => {
-        if (!res.ok) throw new Error('Network error');
-        return res.json();
-      })
-      .then((data) => {
-        if (data) {
-          setMainHeading(data.main_heading || '');
-          setMainSubheading(data.main_subheading || '');
-          setSideImageUrl(data.side_image_url || '');
-          setQrTitle(data.qr_title || '');
-          setQrDescription(data.qr_description || '');
-          setQrImageUrl(data.qr_image_url || '');
-          setTransparencyText(data.transparency_text || '');
-        }
-      })
-      .catch((err) => {
-        console.warn('Could not fetch dynamic donate page content, using defaults:', err);
+        console.warn('Could not fetch dynamic donate content:', err);
       });
 
     return () => {
@@ -448,6 +438,11 @@ export default function DonatePage() {
                 <p className="text-sm text-muted-foreground font-semibold">
                   Scan & Pay with any UPI App
                 </p>
+                {upiId && (
+                  <p className="text-xs font-mono font-bold text-gray-700 mt-1">
+                    UPI ID: <span className="text-[#168039]">{upiId}</span>
+                  </p>
+                )}
               
                 <div className="mt-6 w-full space-y-2">
                   <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">

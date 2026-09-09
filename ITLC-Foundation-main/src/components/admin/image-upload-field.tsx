@@ -59,21 +59,21 @@ export function ImageUploadField({
     aspect === 'square'
       ? 'aspect-square max-w-[180px]'
       : aspect === 'wide'
-      ? 'aspect-[21/9] max-w-md'
+      ? 'aspect-[21/9] w-full max-w-md'
       : aspect === 'auto'
-      ? 'h-36 max-w-sm'
-      : 'aspect-[16/9] max-w-xs';
+      ? 'h-36 w-full max-w-sm'
+      : 'aspect-[16/9] w-full max-w-md';
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between">
+    <div className="space-y-2 w-full min-w-0">
+      <div className="flex items-center justify-between gap-2 flex-wrap">
         <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider">
           {label} {required && <span className="text-red-500">*</span>}
         </label>
         {hint && <span className="text-[11px] text-gray-400">{hint}</span>}
       </div>
 
-      <div className="flex flex-col sm:flex-row items-start gap-4 p-3.5 bg-gray-50 border border-gray-200 rounded-2xl">
+      <div className="flex flex-col items-start gap-3 p-3.5 bg-gray-50 border border-gray-200 rounded-2xl w-full min-w-0">
         {/* Thumbnail Preview Box */}
         <div
           className={`relative w-full ${aspectClass} rounded-xl overflow-hidden border border-gray-200 bg-white flex items-center justify-center shrink-0 shadow-2xs`}
@@ -83,7 +83,7 @@ export function ImageUploadField({
               src={value}
               alt={label}
               fill
-              sizes="200px"
+              sizes="(max-width: 768px) 100vw, 400px"
               className="object-cover"
             />
           ) : (
@@ -95,21 +95,24 @@ export function ImageUploadField({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col gap-2 w-full">
+        <div className="flex flex-col gap-2 w-full min-w-0">
           {/* Path preview */}
           {value && (
-            <div className="text-[11px] font-mono text-gray-500 truncate bg-white px-2.5 py-1.5 rounded-lg border border-gray-200">
+            <div
+              className="text-[11px] font-mono text-gray-600 truncate bg-white px-2.5 py-1.5 rounded-lg border border-gray-200 w-full min-w-0 block"
+              title={value}
+            >
               {value}
             </div>
           )}
 
-          <div className="flex flex-wrap gap-2 pt-1">
+          <div className="flex flex-wrap items-center gap-2 pt-0.5 w-full min-w-0">
             {/* Direct Upload from Device Button */}
             <button
               type="button"
               disabled={isUploading}
               onClick={() => fileInputRef.current?.click()}
-              className="bg-[#168039] hover:bg-[#137233] text-white text-xs font-bold px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer disabled:opacity-75"
+              className="bg-[#168039] hover:bg-[#137233] text-white text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer disabled:opacity-75 shrink-0"
             >
               {isUploading ? (
                 <>
@@ -128,7 +131,7 @@ export function ImageUploadField({
             <button
               type="button"
               onClick={() => setIsGalleryOpen(true)}
-              className="bg-white hover:bg-gray-100 text-gray-800 border border-gray-300 text-xs font-bold px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
+              className="bg-white hover:bg-gray-100 text-gray-800 border border-gray-300 text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer shrink-0"
             >
               <ImageIcon className="w-3.5 h-3.5 text-[#168039]" />
               <span>Choose from Gallery</span>
@@ -139,7 +142,7 @@ export function ImageUploadField({
               <button
                 type="button"
                 onClick={() => onChange('')}
-                className="text-red-600 hover:bg-red-50 text-xs font-medium px-2.5 py-2 rounded-xl flex items-center gap-1 transition-colors cursor-pointer border border-transparent hover:border-red-200"
+                className="text-red-600 hover:bg-red-50 text-xs font-medium px-2.5 py-2 rounded-xl flex items-center gap-1 transition-colors cursor-pointer border border-transparent hover:border-red-200 shrink-0"
               >
                 <Trash2 className="w-3.5 h-3.5" />
                 <span>Remove</span>

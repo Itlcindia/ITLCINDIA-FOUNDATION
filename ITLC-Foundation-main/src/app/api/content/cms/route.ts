@@ -4,13 +4,20 @@ import path from 'path';
 
 const filePath = path.join(process.cwd(), 'src', 'data', 'cms_data.json');
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET() {
   try {
     if (!fs.existsSync(filePath)) {
       return NextResponse.json({ error: 'CMS file not found' }, { status: 404 });
     }
     const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    return NextResponse.json(data);
+    return NextResponse.json(data, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+      },
+    });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
@@ -25,7 +32,14 @@ export async function PUT(req: NextRequest) {
     }
     const merged = { ...currentData, ...updated };
     fs.writeFileSync(filePath, JSON.stringify(merged, null, 2), 'utf8');
-    return NextResponse.json({ success: true, message: 'CMS content updated successfully' });
+    return NextResponse.json(
+      { success: true, message: 'CMS content updated successfully' },
+      {
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+        },
+      }
+    );
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

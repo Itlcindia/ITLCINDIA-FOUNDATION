@@ -379,7 +379,7 @@
   },
   "contact": {
     "address": "G1/0049, Olive Wood Villa, Golf City, Lucknow, Uttar Pradesh – 226030",
-    "email": "info@itlcfoundation.org",
+    "email": "info@itlcfoundation.com",
     "phone": "+91 9876543210",
     "hours": "Monday – Saturday: 9:00 AM – 6:00 PM",
     "mapQuery": "Lucknow, Uttar Pradesh",
@@ -393,7 +393,7 @@
     "qrTitle": "Scan to Support Our NGO",
     "qrDescription": "Quickly donate to our Lucknow projects via any UPI App",
     "qrImage": "/qr.png",
-    "upiId": "itlc@upi",
+    "upiId": "itlcpa@upi",
     "faqs": [
       {
         "id": "faq-1",
@@ -416,7 +416,7 @@
     "tagline": "A Kinder, Stronger Uttar Pradesh.",
     "subTagline": "Empowering Communities Through Learning & Care.",
     "address": "G1/0049, Olive Wood Villa, Golf City, Lucknow, Uttar Pradesh – 226030",
-    "email": "info@itlcfoundation.org",
+    "email": "info@itlcfoundation.com",
     "social": {
       "facebook": "https://facebook.com",
       "instagram": "https://instagram.com",
@@ -432,7 +432,7 @@
     "qrImage": "/qr.png",
     "qrTitle": "Official UPI Barcode Payment",
     "qrDescription": "Scan using Google Pay, PhonePe, Paytm, or BHIM. Or click below to proceed with Gateway / Cards / UPI.",
-    "upiId": "itlc@upi",
+    "upiId": "itlcpankaj@upi",
     "presetAmounts": [
       500,
       1000,
@@ -524,7 +524,7 @@
     "logo": "/uploads/1788860094660-itlc_foundation.png",
     "favicon": "/favicon.ico",
     "phone": "+91 94150 00000",
-    "email": "info@itlcfoundation.org",
+    "email": "info@itlcfoundation.com",
     "address": "G1/0049, Olive Wood Villa, Golf City, Lucknow, Uttar Pradesh – 226030"
   }
 }

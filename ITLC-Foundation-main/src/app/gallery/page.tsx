@@ -6,7 +6,7 @@ import { Card, CardFooter } from '@/components/ui/card';
 import { PageHero } from '@/components/layout/page-hero';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Sparkles, Filter, Eye, Layers } from 'lucide-react';
-import initialCmsData from '@/data/cms_data.json';
+import { initialCmsData } from '@/lib/fallback-cms';
 
 const galleryCategories = [
   { id: 'all', name: 'All Photos' },

@@ -141,7 +141,7 @@ export async function POST(req: NextRequest) {
                 <p style="margin-top: 24px;">Warm regards,<br/><strong>Volunteer Relations Team</strong><br/>ITLC Foundation Lucknow</p>
               </div>
               <div style="background: #f1f5f9; padding: 14px 24px; text-align: center; font-size: 11px; color: #64748b;">
-                G1/0049, Olive Wood Villa, Golf City, Lucknow, UP – 226030 | info@itlcfoundation.org
+                G1/0049, Olive Wood Villa, Golf City, Lucknow, UP – 226030 | info@itlcfoundation.com
               </div>
             </div>
           `,

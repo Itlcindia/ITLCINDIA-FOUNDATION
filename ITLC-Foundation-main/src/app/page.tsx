@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import {
   Heart,
   ArrowRight,
@@ -19,7 +20,7 @@ import {
   Award,
 } from 'lucide-react';
 import { useDonationModal } from '@/context/donation-modal-context';
-import initialCmsData from '@/data/cms_data.json';
+import { initialCmsData } from '@/lib/fallback-cms';
 import { BlogPost, getAllBlogs } from '@/data/blog-posts';
 
 const ICON_MAP: Record<string, any> = {
@@ -67,7 +68,7 @@ export default function Home() {
   const secondaryFeatured = (blogs.length > 1 ? blogs.slice(1, 5) : []).concat(blogs).slice(0, 4);
 
   useEffect(() => {
-    fetch('/api/content/cms')
+    fetch('/api/content/cms', { cache: 'no-store' })
       .then((res) => {
         if (!res.ok) throw new Error('Failed to fetch CMS data');
         return res.json();
@@ -117,6 +118,15 @@ export default function Home() {
         id="top"
         className="relative w-full bg-[#dff0e6] bg-gradient-to-r from-[#daf0e3] via-[#e2f2e7] to-[#d8ece0] pt-10 pb-16 md:pt-14 md:pb-24 lg:pt-16 lg:pb-28 overflow-hidden min-h-[580px] lg:min-h-[640px] flex items-center"
       >
+        {/* Fast 260ms Luminous Page Arrival Light Beam Effect */}
+        <motion.div
+          key="home-hero-sweep"
+          initial={{ x: '-100%', opacity: 0.9 }}
+          animate={{ x: '250%', opacity: 0 }}
+          transition={{ duration: 0.28, ease: 'easeOut' }}
+          className="absolute inset-y-0 w-2/3 bg-gradient-to-r from-transparent via-white/55 to-transparent pointer-events-none z-30 transform -skew-x-12"
+        />
+
         {/* Subtle Organic Plant Seedling Watermark in Background */}
         <div className="absolute inset-0 pointer-events-none select-none overflow-hidden z-0">
           <svg
@@ -128,8 +138,14 @@ export default function Home() {
           </svg>
         </div>
 
-        {/* Right Side: Unboxed Section-Covering HD Photograph (NO Card/Box) */}
-        <div className="hidden lg:block absolute right-0 top-0 bottom-0 w-[54%] xl:w-[50%] h-full pointer-events-none z-10">
+        {/* Right Side: Unboxed Section-Covering HD Photograph with micro entrance */}
+        <motion.div
+          key="home-hero-img"
+          initial={{ opacity: 0.25, scale: 0.985 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.24, ease: 'easeOut' }}
+          className="hidden lg:block absolute right-0 top-0 bottom-0 w-[54%] xl:w-[50%] h-full pointer-events-none z-10"
+        >
           {/* Seamless Natural Photograph covering the right side of the section */}
           <div className="relative w-full h-full [mask-image:linear-gradient(to_right,transparent_0%,rgba(0,0,0,0.35)_10%,rgba(0,0,0,0.85)_22%,black_38%,black_100%)] [-webkit-mask-image:linear-gradient(to_right,transparent_0%,rgba(0,0,0,0.35)_10%,rgba(0,0,0,0.85)_22%,black_38%,black_100%)]">
             <Image
@@ -174,20 +190,29 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Hero Content Layer */}
         <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 relative z-20 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
-            {/* Left Column: Hero Copy & Actions */}
-            <div className="lg:col-span-6 xl:col-span-7 flex flex-col justify-center text-left py-4 lg:py-8 max-w-xl">
+            {/* Left Column: Hero Copy & Actions with snappy entrance */}
+            <motion.div
+              key="home-hero-content"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+              className="lg:col-span-6 xl:col-span-7 flex flex-col justify-center text-left py-4 lg:py-8 max-w-xl"
+            >
               {/* Green Eyebrow */}
               <div className="flex items-center gap-2 mb-4">
-                <span className="text-[#168039] font-bold text-xs md:text-sm tracking-widest uppercase font-headline">
-                  {hero.eyebrow || hero.badge || 'A KINDER, BRIGHTER TOMORROW —'}
+                <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/90 backdrop-blur-xs border border-[#168039]/30 text-[#168039] font-bold text-xs tracking-wider uppercase font-headline shadow-2xs">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#168039] opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#168039]"></span>
+                  </span>
+                  <span>{hero.eyebrow || hero.badge || 'A KINDER, BRIGHTER TOMORROW —'}</span>
                 </span>
-                <span className="hidden sm:inline-block w-8 h-[2px] bg-[#168039]/50 rounded-full" />
               </div>
 
               {/* Exact 3-line Headline */}
@@ -232,10 +257,16 @@ export default function Home() {
                   <ArrowRight className="w-4 h-4 text-[#168039] ml-0.5" />
                 </Link>
               </div>
-            </div>
+            </motion.div>
 
             {/* Mobile/Tablet Fallback Display (Unboxed) */}
-            <div className="lg:hidden relative w-full h-[360px] sm:h-[460px] overflow-hidden [mask-image:linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.85)_12%,black_25%,black_100%)] [-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.85)_12%,black_25%,black_100%)]">
+            <motion.div
+              key="home-hero-mobile-img"
+              initial={{ opacity: 0.3, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.24, ease: 'easeOut' }}
+              className="lg:hidden relative w-full h-[360px] sm:h-[460px] overflow-hidden [mask-image:linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.85)_12%,black_25%,black_100%)] [-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.85)_12%,black_25%,black_100%)]"
+            >
               <Image
                 src={hero.image || '/ref/hero_boy_hd.jpg'}
                 alt="Indian school boy holding green plant sapling in soil with smiling classmates - ITLC Foundation"
@@ -256,7 +287,7 @@ export default function Home() {
                   A Brighter<br />Tomorrow<br />Together.
                 </div>
               </div>
-            </div>
+            </motion.div>
 
           </div>
         </div>

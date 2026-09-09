@@ -23,22 +23,60 @@ export function WebsiteInfoTab({ cms, setCms, onSaveAll }: WebsiteInfoTabProps) 
     logo: '/ref/logo.png',
     favicon: '/favicon.ico',
     phone: '+91 94150 00000',
-    email: 'info@itlcfoundation.org',
+    email: 'info@itlcfoundation.com',
     address: 'G1/0049, Olive Wood Villa, Golf City, Lucknow, Uttar Pradesh – 226030',
   };
 
   const handleFieldChange = (field: string, value: any) => {
     const updated = { ...cms };
     if (!updated.site) updated.site = { ...site };
+    if (!updated.contact) updated.contact = { ...(cms?.contact || {}) };
+    if (!updated.footer) updated.footer = { ...(cms?.footer || {}) };
+
     updated.site[field] = value;
+
+    if (field === 'email') {
+      updated.contact.email = value;
+      updated.footer.email = value;
+    } else if (field === 'phone') {
+      updated.contact.phone = value;
+    } else if (field === 'address') {
+      updated.contact.address = value;
+      updated.footer.address = value;
+    } else if (field === 'tagline') {
+      updated.footer.subTagline = value;
+    }
+
     setCms(updated);
   };
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSave = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     setIsSaving(true);
     try {
-      await onSaveAll();
+      const updated = { ...cms };
+      if (!updated.site) updated.site = { ...site };
+      if (!updated.contact) updated.contact = { ...(cms?.contact || {}) };
+      if (!updated.footer) updated.footer = { ...(cms?.footer || {}) };
+
+      // Ensure full sync on save
+      const currentEmail = updated.site.email || site.email;
+      const currentPhone = updated.site.phone || site.phone;
+      const currentAddress = updated.site.address || site.address;
+
+      updated.site.email = currentEmail;
+      updated.contact.email = currentEmail;
+      updated.footer.email = currentEmail;
+
+      updated.site.phone = currentPhone;
+      updated.contact.phone = currentPhone;
+
+      updated.site.address = currentAddress;
+      updated.contact.address = currentAddress;
+      updated.footer.address = currentAddress;
+
+      setCms(updated);
+      await onSaveAll(updated);
       toast({
         title: 'Branding Saved',
         description: 'Website Logo, Favicon, and Organization Details updated successfully!',
@@ -240,7 +278,7 @@ export function WebsiteInfoTab({ cms, setCms, onSaveAll }: WebsiteInfoTabProps) 
                 type="email"
                 value={site.email || ''}
                 onChange={(e) => handleFieldChange('email', e.target.value)}
-                placeholder="info@itlcfoundation.org"
+                placeholder="info@itlcfoundation.com"
                 className="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 outline-none focus:border-[#168039]"
               />
             </div>

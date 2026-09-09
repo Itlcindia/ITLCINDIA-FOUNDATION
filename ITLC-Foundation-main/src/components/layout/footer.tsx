@@ -13,24 +13,31 @@ import {
   Sparkles,
   GraduationCap,
   Droplets,
-  HeartHandshake
+  HeartHandshake,
+  Mail,
+  MapPin
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import initialCmsData from '@/data/cms_data.json';
 
 export function Footer() {
   const pathname = usePathname();
-  const [logo, setLogo] = useState<string>((initialCmsData as any)?.site?.logo || '/ref/logo.png');
+  const [logo, setLogo] = useState<string>('/ref/logo.png');
+  const [email, setEmail] = useState<string>('info@itlcfoundation.com');
+  const [address, setAddress] = useState<string>('G1/0049, Olive Wood Villa, Golf City, Lucknow, Uttar Pradesh – 226030');
+  const [social, setSocial] = useState<any>({});
 
   useEffect(() => {
-    fetch('/api/content/cms')
+    fetch('/api/content/cms', { cache: 'no-store' })
       .then((res) => {
         if (!res.ok) return null;
         return res.json();
       })
       .then((data) => {
         if (data?.site?.logo) setLogo(data.site.logo);
+        if (data?.site?.email || data?.contact?.email) setEmail(data.site?.email || data.contact?.email);
+        if (data?.site?.address || data?.contact?.address) setAddress(data.site?.address || data.contact?.address);
+        if (data?.footer?.social) setSocial(data.footer.social);
       })
       .catch(() => {});
   }, []);
@@ -95,7 +102,7 @@ export function Footer() {
               {/* Social Icons Row */}
               <div className="flex items-center justify-center gap-3">
                 <Link
-                  href="https://facebook.com"
+                  href={social?.facebook || "https://facebook.com"}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Facebook"
@@ -104,7 +111,7 @@ export function Footer() {
                   <Facebook className="w-4 h-4" />
                 </Link>
                 <Link
-                  href="https://instagram.com"
+                  href={social?.instagram || "https://instagram.com"}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"
@@ -113,7 +120,7 @@ export function Footer() {
                   <Instagram className="w-4 h-4" />
                 </Link>
                 <Link
-                  href="https://youtube.com"
+                  href={social?.youtube || "https://youtube.com"}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="YouTube"
@@ -122,7 +129,7 @@ export function Footer() {
                   <Youtube className="w-4 h-4" />
                 </Link>
                 <Link
-                  href="https://linkedin.com"
+                  href={social?.linkedin || "https://linkedin.com"}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="LinkedIn"
@@ -131,7 +138,7 @@ export function Footer() {
                   <Linkedin className="w-4 h-4" />
                 </Link>
                 <Link
-                  href="https://x.com"
+                  href={social?.twitter || "https://x.com"}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="X (Twitter)"
@@ -139,6 +146,16 @@ export function Footer() {
                 >
                   <span className="font-bold text-xs">𝕏</span>
                 </Link>
+              </div>
+
+              {/* Dynamic Email Display */}
+              <div className="text-center sm:text-left space-y-1 text-xs text-white/80 pt-1">
+                <p className="flex items-center gap-1.5 justify-center sm:justify-start">
+                  <Mail className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <a href={`mailto:${email}`} className="hover:text-emerald-300 transition-colors underline font-medium">
+                    {email}
+                  </a>
+                </p>
               </div>
             </div>
           </div>

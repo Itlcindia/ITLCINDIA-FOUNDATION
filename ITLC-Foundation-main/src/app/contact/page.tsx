@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -25,20 +25,6 @@ const sectionVariants = {
   },
 };
 
-const contactInfo = [
-  {
-    icon: <MapPin className="h-8 w-8 text-[#168039]" />,
-    title: "Our NGO Address",
-    content: "G1/0049,Olive Wood Villa, Golf City, Lucknow, Uttar Pradesh – 226030"
-  },
-  {
-    icon: <Mail className="h-8 w-8 text-[#168039]" />,
-    title: "Email",
-    content: "info@itlcfoundation.org",
-    href: "mailto:info@itlcfoundation.org"
-  }
-];
-
 const ContactInfoCard = ({ icon, title, content, href }: { icon: React.ReactNode; title: string; content: string; href?: string; }) => {
     const contentEl = href ? <a href={href} className="hover:text-primary transition-colors">{content}</a> : <p>{content}</p>;
     return (
@@ -56,6 +42,25 @@ const ContactInfoCard = ({ icon, title, content, href }: { icon: React.ReactNode
 
 export default function ContactPage() {
   const { openDonationModal } = useDonationModal();
+  const [contactData, setContactData] = useState({
+    address: 'G1/0049, Olive Wood Villa, Golf City, Lucknow, Uttar Pradesh – 226030',
+    email: 'info@itlcfoundation.com',
+    phone: '+91 94150 00000',
+  });
+
+  useEffect(() => {
+    fetch('/api/content/cms', { cache: 'no-store' })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data) {
+          const email = data.site?.email || data.contact?.email || 'info@itlcfoundation.com';
+          const phone = data.site?.phone || data.contact?.phone || '+91 94150 00000';
+          const address = data.site?.address || data.contact?.address || 'G1/0049, Olive Wood Villa, Golf City, Lucknow, Uttar Pradesh – 226030';
+          setContactData({ email, phone, address });
+        }
+      })
+      .catch(() => {});
+  }, []);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -114,8 +119,24 @@ export default function ContactPage() {
           viewport={{ once: true, amount: 0.05 }}
           variants={sectionVariants}
         >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {contactInfo.map(info => <ContactInfoCard key={info.title} {...info} />)}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <ContactInfoCard
+                icon={<MapPin className="h-8 w-8 text-[#168039]" />}
+                title="Our NGO Address"
+                content={contactData.address}
+              />
+              <ContactInfoCard
+                icon={<Mail className="h-8 w-8 text-[#168039]" />}
+                title="Official Email"
+                content={contactData.email}
+                href={`mailto:${contactData.email}`}
+              />
+              <ContactInfoCard
+                icon={<Phone className="h-8 w-8 text-[#168039]" />}
+                title="Helpline & Phone"
+                content={contactData.phone}
+                href={`tel:${contactData.phone.replace(/[^0-9+]/g, '')}`}
+              />
             </div>
         </motion.div>
 
@@ -189,7 +210,7 @@ export default function ContactPage() {
                           required
                           value={formData.email}
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                          placeholder="you@example.com"
+                          placeholder=""
                           className="rounded-xl border-gray-300 focus:border-[#168039]"
                         />
                         </div>
