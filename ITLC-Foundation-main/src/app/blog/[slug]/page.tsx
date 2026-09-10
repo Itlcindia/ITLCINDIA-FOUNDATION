@@ -29,12 +29,12 @@ import {
 import { useDonationModal } from '@/context/donation-modal-context';
 import { BlogAdSlot } from '@/components/blog/blog-ad-slot';
 
-export interface BlogFaq {
+interface BlogFaq {
   question: string;
   answer: string;
 }
 
-export function getBlogFaqs(category: string, slug: string): BlogFaq[] {
+function getBlogFaqs(category: string, slug: string): BlogFaq[] {
   const cat = (category || '').toLowerCase();
   const s = (slug || '').toLowerCase();
 

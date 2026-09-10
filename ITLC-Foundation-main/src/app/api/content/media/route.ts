@@ -2,12 +2,20 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
+interface MediaItem {
+  url: string;
+  name: string;
+  folder: string;
+  size?: number;
+  mtime?: number;
+}
+
 export async function GET() {
   try {
-    const mediaList: { url: string; name: string; folder: string }[] = [];
+    const mediaList: MediaItem[] = [];
     const publicDir = path.join(process.cwd(), 'public');
 
-    const foldersToScan = ['uploads', 'ref', 'gal', 'pro'];
+    const foldersToScan = ['uploads', 'ref', 'gal', 'pro', 'causes'];
     const srcImagesDir = path.join(process.cwd(), 'src', 'images');
 
     // Auto-sync: if any file was added to src/images, ensure it exists in public
@@ -124,8 +132,8 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: 'Core system assets cannot be deleted' }, { status: 403 });
     }
 
-    // Allowed directories for media deletion: uploads, gal, pro, ref
-    const allowedPrefixes = ['uploads/', 'gal/', 'pro/', 'ref/'];
+    // Allowed directories for media deletion: uploads, gal, pro, ref, causes
+    const allowedPrefixes = ['uploads/', 'gal/', 'pro/', 'ref/', 'causes/'];
     const isAllowed =
       allowedPrefixes.some((prefix) => safeUrl.startsWith(prefix)) ||
       safeUrl.startsWith('vs.jpg');
