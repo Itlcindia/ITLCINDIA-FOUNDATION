@@ -5,10 +5,16 @@ import Image from 'next/image';
 import Link from 'next/link';
 import {
   BookOpen, Plus, Edit, Trash2, ExternalLink, Loader2, Image as ImageIcon,
-  Layers, Check, X, Calendar, Clock, Sparkles, AlertCircle, RefreshCw
+  Layers, Check, X, Calendar, Clock, Sparkles, AlertCircle, RefreshCw,
+  Star, Globe, HelpCircle, FileText, User, ChevronDown, ChevronUp
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { MediaGalleryModal } from '@/components/admin/media-gallery-modal';
+
+interface BlogFaqItem {
+  question: string;
+  answer: string;
+}
 
 interface BlogItem {
   id?: string;
@@ -17,6 +23,7 @@ interface BlogItem {
   category: string;
   excerpt: string;
   author: string;
+  authorRole?: string;
   date: string;
   readTime: string;
   image: string;
@@ -24,6 +31,11 @@ interface BlogItem {
   tags: string[];
   keyPoints: string[];
   content: string;
+  faqs?: BlogFaqItem[];
+  metaTitle?: string;
+  metaDescription?: string;
+  status?: 'published' | 'draft';
+  isFeatured?: boolean;
 }
 
 export function BlogsManagerTab() {
@@ -42,6 +54,11 @@ export function BlogsManagerTab() {
   const [formSlug, setFormSlug] = useState('');
   const [formCategory, setFormCategory] = useState('Environment Protection');
   const [formAuthor, setFormAuthor] = useState('ITLC Foundation');
+  const [formAuthorRole, setFormAuthorRole] = useState('Editorial & Field Team');
+  const [formStatus, setFormStatus] = useState<'published' | 'draft'>('published');
+  const [formIsFeatured, setFormIsFeatured] = useState(false);
+  const [formMetaTitle, setFormMetaTitle] = useState('');
+  const [formMetaDescription, setFormMetaDescription] = useState('');
   const [formDate, setFormDate] = useState('');
   const [formReadTime, setFormReadTime] = useState('6 min read');
   const [formExcerpt, setFormExcerpt] = useState('');
@@ -49,6 +66,7 @@ export function BlogsManagerTab() {
   const [formKeyPoints, setFormKeyPoints] = useState('');
   const [formTags, setFormTags] = useState('');
   const [formImages, setFormImages] = useState<string[]>([]);
+  const [formFaqs, setFormFaqs] = useState<BlogFaqItem[]>([]);
 
   // Media picker modal for adding images
   const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false);
@@ -86,6 +104,86 @@ export function BlogsManagerTab() {
     fetchBlogs();
   }, []);
 
+  const handleAddFaq = () => {
+    setFormFaqs([...formFaqs, { question: '', answer: '' }]);
+  };
+
+  const handleRemoveFaq = (index: number) => {
+    setFormFaqs(formFaqs.filter((_, idx) => idx !== index));
+  };
+
+  const handleFaqChange = (index: number, field: 'question' | 'answer', value: string) => {
+    const updated = [...formFaqs];
+    updated[index] = { ...updated[index], [field]: value };
+    setFormFaqs(updated);
+  };
+
+  const handleFillDefaultFaqs = () => {
+    const cat = formCategory.toLowerCase();
+    if (cat.includes('women')) {
+      setFormFaqs([
+        {
+          question: 'How does ITLC Foundation support women in rural Uttar Pradesh?',
+          answer: 'We provide free vocational training in tailoring and handicrafts, sewing machines, digital banking literacy, and help establish Self-Help Groups (SHGs) for sustained household earnings.'
+        },
+        {
+          question: 'Are the vocational training courses free of cost for participants?',
+          answer: 'Yes, all skill development workshops, toolkits, and certification programs are 100% free for underprivileged women and adolescent girls.'
+        },
+        {
+          question: 'How are women connected to markets to sell their finished garments?',
+          answer: 'Our ground teams link skilled artisans with local garment retailers, corporate uniform orders, and handicraft exhibitions to secure monthly earnings.'
+        },
+        {
+          question: 'How can donors contribute or sponsor a woman’s training cycle?',
+          answer: 'Donors can sponsor sewing toolkits or 6-month skill cycles through our Section 80G tax-exempt donation gateway.'
+        }
+      ]);
+    } else if (cat.includes('animal')) {
+      setFormFaqs([
+        {
+          question: 'How does ITLC Foundation care for injured street animals in Lucknow?',
+          answer: 'We run community feeding routes, on-site wound dressings, anti-rabies vaccination drives, and partner with local veterinary clinics for emergency trauma.'
+        },
+        {
+          question: 'What is the purpose of reflective safety collars on street animals?',
+          answer: 'During dense winter fog in UP, high-grade reflective collars catch vehicle headlights, reducing nocturnal road accidents by more than 70%.'
+        },
+        {
+          question: 'How can citizens report an injured stray in their neighborhood?',
+          answer: 'You can alert our local volunteer coordinators via the ITLC Foundation helpline with GPS location details and photos for prompt rescue.'
+        },
+        {
+          question: 'How are community feeding programs organized across the city?',
+          answer: 'Volunteers prepare and distribute fresh rice, boiled lentils, and nutrient-rich broth at designated quiet feeding points every evening.'
+        }
+      ]);
+    } else {
+      setFormFaqs([
+        {
+          question: 'Why does ITLC Foundation prioritize native trees like Neem, Peepal, and Banyan?',
+          answer: 'Native Indian tree species are drought-resilient, provide dense shade, emit abundant oxygen, and survive without depleting ground water tables.'
+        },
+        {
+          question: 'What is the "Adopt-a-Tree" stewardship model?',
+          answer: 'We map each planted sapling, equip local caretakers with water cans and tree guards, and perform bi-weekly maintenance patrol to ensure an 88%+ survival rate.'
+        },
+        {
+          question: 'Are financial contributions eligible for Section 80G tax exemption?',
+          answer: 'Yes, all donations qualify for a 50% tax deduction under Section 80G of the Indian Income Tax Act with immediate computerized receipts.'
+        },
+        {
+          question: 'How can citizens volunteer in weekend community green drives?',
+          answer: 'Anyone can register through our Volunteer portal to take part in tree planting, pit digging, and sapling distribution drives across Uttar Pradesh.'
+        }
+      ]);
+    }
+    toast({
+      title: 'FAQs Pre-filled',
+      description: `Loaded 4 suggested FAQs tailored to "${formCategory}".`,
+    });
+  };
+
   const openCreateModal = () => {
     setIsEditing(false);
     setEditingId(null);
@@ -93,6 +191,11 @@ export function BlogsManagerTab() {
     setFormSlug('');
     setFormCategory('Environment Protection');
     setFormAuthor('ITLC Foundation');
+    setFormAuthorRole('Editorial & Field Team');
+    setFormStatus('published');
+    setFormIsFeatured(false);
+    setFormMetaTitle('');
+    setFormMetaDescription('');
     setFormDate(new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }));
     setFormReadTime('6 min read');
     setFormExcerpt('');
@@ -100,6 +203,7 @@ export function BlogsManagerTab() {
     setFormKeyPoints('');
     setFormTags('Community, UP, NGO');
     setFormImages(['/pro/ab.png']);
+    setFormFaqs([]);
     setIsModalOpen(true);
   };
 
@@ -110,6 +214,11 @@ export function BlogsManagerTab() {
     setFormSlug(blog.slug);
     setFormCategory(blog.category || 'Environment Protection');
     setFormAuthor(blog.author || 'ITLC Foundation');
+    setFormAuthorRole(blog.authorRole || 'Editorial & Field Team');
+    setFormStatus(blog.status || 'published');
+    setFormIsFeatured(Boolean(blog.isFeatured));
+    setFormMetaTitle(blog.metaTitle || '');
+    setFormMetaDescription(blog.metaDescription || '');
     setFormDate(blog.date || '');
     setFormReadTime(blog.readTime || '6 min read');
     setFormExcerpt(blog.excerpt || '');
@@ -118,21 +227,37 @@ export function BlogsManagerTab() {
     setFormTags(Array.isArray(blog.tags) ? blog.tags.join(', ') : '');
     const imgs = blog.images && blog.images.length > 0 ? blog.images : [blog.image || '/pro/ab.png'];
     setFormImages(imgs);
+    setFormFaqs(Array.isArray(blog.faqs) && blog.faqs.length > 0 ? blog.faqs : []);
     setIsModalOpen(true);
   };
 
   const handleAddImage = (url: string) => {
     if (!formImages.includes(url)) {
       setFormImages([...formImages, url]);
+      toast({
+        title: 'Image Added',
+        description: 'Selected photo added to article images.',
+      });
     }
   };
 
   const handleRemoveImage = (indexToRemove: number) => {
-    if (formImages.length <= 1) {
-      alert('At least one image is required for the blog post.');
-      return;
-    }
     setFormImages(formImages.filter((_, idx) => idx !== indexToRemove));
+    toast({
+      title: 'Image Removed',
+      description: 'Photo removed from article images.',
+    });
+  };
+
+  const handleMakePrimary = (indexToMakePrimary: number) => {
+    if (indexToMakePrimary === 0) return;
+    const selected = formImages[indexToMakePrimary];
+    const others = formImages.filter((_, idx) => idx !== indexToMakePrimary);
+    setFormImages([selected, ...others]);
+    toast({
+      title: 'Primary Image Updated',
+      description: 'Photo is now set as the main featured image.',
+    });
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -153,7 +278,12 @@ export function BlogsManagerTab() {
         slug: formSlug.trim() || undefined,
         title: formTitle.trim(),
         category: formCategory,
-        author: formAuthor,
+        author: formAuthor.trim(),
+        authorRole: formAuthorRole.trim(),
+        status: formStatus,
+        isFeatured: formIsFeatured,
+        metaTitle: formMetaTitle.trim(),
+        metaDescription: formMetaDescription.trim(),
         date: formDate,
         readTime: formReadTime,
         excerpt: formExcerpt,
@@ -162,6 +292,7 @@ export function BlogsManagerTab() {
         images: formImages,
         tags: formTags.split(',').map((t) => t.trim()).filter(Boolean),
         keyPoints: formKeyPoints.split('\n').map((k) => k.trim()).filter(Boolean),
+        faqs: formFaqs.filter((f) => f.question.trim() && f.answer.trim()),
       };
 
       const res = await fetch('/api/content/blogs', {
@@ -289,8 +420,21 @@ export function BlogsManagerTab() {
                       sizes="(max-width: 768px) 100vw, 400px"
                       className="object-cover"
                     />
-                    <div className="absolute top-2.5 left-2.5 bg-white/95 backdrop-blur-xs text-[10px] font-bold text-[#168039] px-2.5 py-0.5 rounded-full shadow-xs">
-                      {blog.category}
+                    <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 flex-wrap">
+                      <span className="bg-white/95 backdrop-blur-xs text-[10px] font-bold text-[#168039] px-2.5 py-0.5 rounded-full shadow-xs">
+                        {blog.category}
+                      </span>
+                      {blog.isFeatured && (
+                        <span className="bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs flex items-center gap-1">
+                          <Star className="w-2.5 h-2.5 fill-white" />
+                          <span>Featured</span>
+                        </span>
+                      )}
+                      {blog.status === 'draft' && (
+                        <span className="bg-amber-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs">
+                          Draft
+                        </span>
+                      )}
                     </div>
                     {images.length > 1 && (
                       <div className="absolute top-2.5 right-2.5 bg-black/70 backdrop-blur-xs text-white text-[10px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-1">
@@ -313,14 +457,34 @@ export function BlogsManagerTab() {
 
                   {/* Metadata & Title */}
                   <div>
-                    <div className="flex items-center gap-2 text-[10px] text-gray-400 mb-1">
+                    <div className="flex items-center gap-2 text-[10px] text-gray-400 mb-1 flex-wrap">
                       <span>{blog.date}</span>
                       <span>&bull;</span>
                       <span>{blog.readTime}</span>
+                      <span>&bull;</span>
+                      <span className="text-gray-600 font-medium">
+                        {blog.author} {blog.authorRole ? `(${blog.authorRole})` : ''}
+                      </span>
                     </div>
                     <h4 className="font-bold text-gray-900 text-sm leading-snug line-clamp-2">
                       {blog.title}
                     </h4>
+                  </div>
+
+                  {/* Feature & FAQ Badges */}
+                  <div className="flex items-center gap-2 flex-wrap text-[10px]">
+                    {Array.isArray(blog.faqs) && blog.faqs.length > 0 && (
+                      <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-[#168039] font-bold border border-emerald-100 flex items-center gap-1">
+                        <HelpCircle className="w-3 h-3" />
+                        <span>{blog.faqs.length} Custom FAQs</span>
+                      </span>
+                    )}
+                    {blog.metaTitle && (
+                      <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 font-semibold border border-blue-100 flex items-center gap-1">
+                        <Globe className="w-3 h-3" />
+                        <span>SEO Configured</span>
+                      </span>
+                    )}
                   </div>
 
                   {/* Short Summary (Excerpt) */}
@@ -437,15 +601,55 @@ export function BlogsManagerTab() {
                 </div>
               </div>
 
-              {/* Author & Read time & Date */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {/* Status & Featured Article Controls */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80">
                 <div>
-                  <label className="block font-bold text-gray-700 mb-1">Author / Wing</label>
+                  <label className="block font-bold text-gray-700 mb-1 text-[11px]">Publication Status</label>
+                  <select
+                    value={formStatus}
+                    onChange={(e) => setFormStatus(e.target.value as 'published' | 'draft')}
+                    className="w-full px-3 py-2 rounded-xl border border-gray-300 outline-none focus:border-[#168039] bg-white font-medium text-xs"
+                  >
+                    <option value="published">🟢 Published (Live on website)</option>
+                    <option value="draft">🟡 Draft (Hidden from visitors)</option>
+                  </select>
+                </div>
+                <div className="flex items-center gap-3 pt-1 sm:pt-6">
+                  <label className="flex items-center gap-2 cursor-pointer font-bold text-gray-700 text-xs">
+                    <input
+                      type="checkbox"
+                      checked={formIsFeatured}
+                      onChange={(e) => setFormIsFeatured(e.target.checked)}
+                      className="w-4 h-4 rounded text-[#168039] focus:ring-[#168039]"
+                    />
+                    <span className="flex items-center gap-1.5">
+                      <Star className={`w-4 h-4 ${formIsFeatured ? 'text-amber-500 fill-amber-500' : 'text-gray-400'}`} />
+                      <span>Featured Article (Spotlight on Hub Banner)</span>
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Author, Role, Reading Time & Date */}
+              <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                <div>
+                  <label className="block font-bold text-gray-700 mb-1">Author / Wing *</label>
                   <input
                     type="text"
+                    required
                     value={formAuthor}
                     onChange={(e) => setFormAuthor(e.target.value)}
                     placeholder="ITLC Editorial Wing"
+                    className="w-full px-3 py-2 rounded-xl border border-gray-300 outline-none focus:border-[#168039]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-gray-700 mb-1">Author Role / Designation</label>
+                  <input
+                    type="text"
+                    value={formAuthorRole}
+                    onChange={(e) => setFormAuthorRole(e.target.value)}
+                    placeholder="e.g. Field Coordinator"
                     className="w-full px-3 py-2 rounded-xl border border-gray-300 outline-none focus:border-[#168039]"
                   />
                 </div>
@@ -490,51 +694,122 @@ export function BlogsManagerTab() {
               {/* ======================================================== */}
               {/* MULTIPLE IMAGES MANAGER                                  */}
               {/* ======================================================== */}
-              <div className="p-4 bg-emerald-50/50 rounded-2xl border border-emerald-200/80 space-y-3">
-                <div className="flex items-center justify-between">
+              <div className="p-4 sm:p-5 bg-emerald-50/60 rounded-3xl border-2 border-emerald-200 space-y-4 shadow-xs">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-emerald-100">
                   <div>
-                    <label className="font-bold text-gray-900 flex items-center gap-1.5 text-xs">
+                    <label className="font-bold text-gray-900 flex items-center gap-2 text-sm">
                       <Layers className="w-4 h-4 text-[#168039]" />
-                      <span>Multiple Article Images ({formImages.length})</span>
+                      <span>Article Images ({formImages.length} Selected)</span>
                     </label>
-                    <p className="text-[11px] text-gray-500">
-                      Add multiple photos for this blog. First photo is the main featured image.
+                    <p className="text-[11px] text-gray-600 mt-0.5">
+                      Pehli photo blog ki main featured image hogi. Aap multiple photos add aur delete kar sakte hain.
                     </p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => setIsMediaPickerOpen(true)}
-                    className="bg-[#168039] hover:bg-[#137233] text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Add Image</span>
-                  </button>
+
+                  {/* Add Image Button & Quick Selected Preview */}
+                  <div className="flex items-center gap-2.5 shrink-0">
+                    {formImages.length > 0 && (
+                      <div className="flex items-center gap-2 bg-white px-2.5 py-1.5 rounded-xl border border-emerald-200 shadow-2xs">
+                        <div className="relative w-8 h-8 rounded-lg overflow-hidden border border-emerald-300 bg-gray-100 shrink-0">
+                          <Image src={formImages[0]} alt="Selected thumbnail" fill sizes="32px" className="object-cover" />
+                        </div>
+                        <span className="text-[10px] font-bold text-gray-700 hidden sm:inline truncate max-w-[100px]">
+                          {formImages[0].split('/').pop()}
+                        </span>
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => setIsMediaPickerOpen(true)}
+                      className="bg-[#168039] hover:bg-[#137233] text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer flex items-center gap-1.5"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>+ Add Image</span>
+                    </button>
+                  </div>
                 </div>
 
-                {/* Images Preview Grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-                  {formImages.map((img, index) => (
-                    <div
-                      key={index}
-                      className="relative rounded-xl overflow-hidden border border-gray-200 bg-white group shadow-2xs aspect-video"
-                    >
-                      <Image src={img} alt={`Image ${index + 1}`} fill sizes="160px" className="object-cover" />
-                      {index === 0 && (
-                        <span className="absolute top-1 left-1 bg-[#168039] text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
-                          Primary
-                        </span>
-                      )}
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveImage(index)}
-                        className="absolute top-1 right-1 p-1 bg-red-600 text-white rounded-md opacity-80 hover:opacity-100 shadow transition-opacity cursor-pointer"
-                        title="Remove this image"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </button>
+                {/* Images Preview Grid with Guaranteed Height */}
+                {formImages.length === 0 ? (
+                  <div
+                    onClick={() => setIsMediaPickerOpen(true)}
+                    className="border-2 border-dashed border-emerald-300 hover:border-[#168039] bg-white rounded-2xl p-8 text-center cursor-pointer transition-all space-y-2 group"
+                  >
+                    <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 mx-auto flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <ImageIcon className="w-6 h-6" />
                     </div>
-                  ))}
-                </div>
+                    <p className="text-xs font-bold text-gray-800">Koi bhi image select nahi hai</p>
+                    <p className="text-[11px] text-gray-500">
+                      Yahan click karein ya upar <span className="font-bold text-[#168039]">&quot;+ Add Image&quot;</span> button daba kar gallery se photo chunein
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5 pt-1">
+                    {formImages.map((img, index) => {
+                      const fileName = img.split('/').pop() || `Image ${index + 1}`;
+                      const isPrimary = index === 0;
+                      return (
+                        <div
+                          key={`${img}-${index}`}
+                          className={`relative h-44 sm:h-48 w-full rounded-2xl overflow-hidden border-2 bg-slate-900 group shadow-sm flex flex-col justify-between transition-all ${
+                            isPrimary
+                              ? 'border-[#168039] ring-2 ring-[#168039]/40'
+                              : 'border-gray-200 hover:border-emerald-400'
+                          }`}
+                        >
+                          {/* Visible Image */}
+                          <Image
+                            src={img}
+                            alt={`Article Image ${index + 1}`}
+                            fill
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                            className="object-cover"
+                          />
+
+                          {/* Top Controls Bar */}
+                          <div className="relative z-10 p-2.5 flex items-center justify-between bg-gradient-to-b from-black/80 via-black/40 to-transparent">
+                            {isPrimary ? (
+                              <span className="bg-[#168039] text-white text-[10px] font-black px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-1">
+                                <Check className="w-3 h-3" />
+                                <span>Main Featured</span>
+                              </span>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => handleMakePrimary(index)}
+                                className="bg-white/90 hover:bg-[#168039] hover:text-white text-gray-800 text-[10px] font-bold px-2 py-1 rounded-lg backdrop-blur-xs transition-colors cursor-pointer shadow-xs"
+                                title="Set as main featured image"
+                              >
+                                Set as Main
+                              </button>
+                            )}
+
+                            {/* Prominent Delete Button */}
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveImage(index)}
+                              className="px-2.5 py-1 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-md transition-all cursor-pointer flex items-center gap-1 text-[11px] font-bold"
+                              title="Delete this image"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                              <span>Delete</span>
+                            </button>
+                          </div>
+
+                          {/* Bottom File Name Bar */}
+                          <div className="relative z-10 p-2.5 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex items-center justify-between text-white text-[11px]">
+                            <span className="truncate max-w-[180px] font-mono font-medium text-white" title={img}>
+                              {fileName}
+                            </span>
+                            <span className="text-white/75 text-[10px] shrink-0 font-sans px-1.5 py-0.5 rounded bg-white/20">
+                              #{index + 1}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
               {/* Key Takeaways / Bullet points */}
@@ -577,6 +852,125 @@ export function BlogsManagerTab() {
                   placeholder="Women Empowerment, Skill Development, Lucknow, UP"
                   className="w-full px-3 py-2 rounded-xl border border-gray-300 outline-none focus:border-[#168039]"
                 />
+              </div>
+
+              {/* ======================================================== */}
+              {/* FREQUENTLY ASKED QUESTIONS (FAQs) MANAGER                */}
+              {/* ======================================================== */}
+              <div className="p-4 bg-slate-50/70 rounded-2xl border border-slate-200 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <label className="font-bold text-gray-900 flex items-center gap-1.5 text-xs">
+                      <HelpCircle className="w-4 h-4 text-[#168039]" />
+                      <span>Article FAQs Accordion ({formFaqs.length})</span>
+                    </label>
+                    <p className="text-[11px] text-gray-500">
+                      These questions and answers appear in the accordion on the live blog page.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handleFillDefaultFaqs}
+                      className="text-[11px] font-bold text-[#168039] hover:bg-emerald-100 px-2.5 py-1 bg-emerald-50 rounded-lg border border-emerald-200 transition-colors cursor-pointer"
+                    >
+                      Pre-fill 4 FAQs
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleAddFaq}
+                      className="bg-[#168039] hover:bg-[#137233] text-white px-3 py-1 rounded-lg text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add FAQ</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-3 pt-1">
+                  {formFaqs.map((faq, index) => (
+                    <div key={index} className="p-3 bg-white rounded-xl border border-gray-200 space-y-2 relative shadow-2xs">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-gray-700 text-[11px] flex items-center gap-1.5">
+                          <span className="w-4 h-4 rounded-full bg-[#168039] text-white flex items-center justify-center text-[10px]">
+                            {index + 1}
+                          </span>
+                          <span>FAQ Item #{index + 1}</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveFaq(index)}
+                          className="text-red-500 hover:text-red-700 text-xs font-semibold flex items-center gap-1 cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>Remove</span>
+                        </button>
+                      </div>
+                      <input
+                        type="text"
+                        value={faq.question}
+                        onChange={(e) => handleFaqChange(index, 'question', e.target.value)}
+                        placeholder="e.g. How does this project support rural families in UP?"
+                        className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs font-medium outline-none focus:border-[#168039]"
+                      />
+                      <textarea
+                        rows={2}
+                        value={faq.answer}
+                        onChange={(e) => handleFaqChange(index, 'answer', e.target.value)}
+                        placeholder="Detailed answer shown when the reader opens this FAQ..."
+                        className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs outline-none focus:border-[#168039]"
+                      />
+                    </div>
+                  ))}
+                  {formFaqs.length === 0 && (
+                    <div className="text-center py-4 border border-dashed border-gray-300 rounded-xl text-gray-400 text-xs bg-white">
+                      No custom FAQs added yet. Click &quot;Pre-fill 4 FAQs&quot; or &quot;Add FAQ&quot; above.
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* ======================================================== */}
+              {/* SEARCH ENGINE OPTIMIZATION (SEO METADATA)                */}
+              {/* ======================================================== */}
+              <div className="p-4 bg-slate-50/70 rounded-2xl border border-slate-200 space-y-3">
+                <div>
+                  <label className="font-bold text-gray-900 flex items-center gap-1.5 text-xs">
+                    <Globe className="w-4 h-4 text-[#0f5b9e]" />
+                    <span>Search Engine Optimization (SEO Metadata)</span>
+                  </label>
+                  <p className="text-[11px] text-gray-500">
+                    Customize the page title and meta description seen on Google and social media.
+                  </p>
+                </div>
+                <div className="space-y-2.5">
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="font-bold text-gray-700 text-[11px]">SEO Meta Title</label>
+                      <span className="text-[10px] text-gray-400">{formMetaTitle.length}/70 chars</span>
+                    </div>
+                    <input
+                      type="text"
+                      value={formMetaTitle}
+                      onChange={(e) => setFormMetaTitle(e.target.value)}
+                      placeholder="e.g. Empowering Rural Women in UP: Tailoring & Self-Help Groups | ITLC Foundation"
+                      className="w-full px-3 py-2 rounded-xl border border-gray-300 outline-none focus:border-[#168039] text-xs"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="font-bold text-gray-700 text-[11px]">SEO Meta Description</label>
+                      <span className="text-[10px] text-gray-400">{formMetaDescription.length}/160 chars</span>
+                    </div>
+                    <textarea
+                      rows={2}
+                      value={formMetaDescription}
+                      onChange={(e) => setFormMetaDescription(e.target.value)}
+                      placeholder="e.g. Discover how ITLC Foundation helps women in rural Uttar Pradesh achieve financial freedom through free vocational skills and sewing toolkits."
+                      className="w-full px-3 py-2 rounded-xl border border-gray-300 outline-none focus:border-[#168039] text-xs"
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Modal Actions */}

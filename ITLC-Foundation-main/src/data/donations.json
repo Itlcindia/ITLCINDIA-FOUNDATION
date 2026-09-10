@@ -1,5 +1,18 @@
 [
   {
+    "id": "don_1788955749584_d3iu",
+    "receiptNo": "ITLC-80G-690761-2026",
+    "donorName": "Aarav Gupta",
+    "donorEmail": "aarav@example.com",
+    "donorPhone": "9999999999",
+    "amount": 250,
+    "type": "one-time",
+    "paymentId": "pay_test_dedupe_1788955729483",
+    "date": "9 September 2026",
+    "createdAt": "2026-09-09T12:09:09.584Z",
+    "status": "Verified (80G)"
+  },
+  {
     "id": "don_1788950970693_pzwg",
     "receiptNo": "ITLC-80G-147135-2026",
     "donorName": "Rohan Sharma",
@@ -31,27 +44,6 @@
     "donorEmail": "",
     "donorPhone": "",
     "receiptNo": "ITLC-80G-735548-2026",
-    "paymentId": "pay_testReal456"
-  },
-  {
-    "id": "don_mtr7ox85tlh9",
-    "donor_name": "Test Donor",
-    "donor_email": "",
-    "donor_phone": "",
-    "amount": 500,
-    "type": "one-time",
-    "status": "completed",
-    "payment_method": "Razorpay Standard Checkout",
-    "payment_id": "pay_testReal456",
-    "order_id": "order_TZ94BiJli6bPnD",
-    "receipt_no": "ITLC-80G-116378-2026",
-    "verified": true,
-    "createdAt": "2026-09-07T12:23:24.725Z",
-    "date": "7 Sept 2026",
-    "donorName": "Test Donor",
-    "donorEmail": "",
-    "donorPhone": "",
-    "receiptNo": "ITLC-80G-116378-2026",
     "paymentId": "pay_testReal456"
   },
   {

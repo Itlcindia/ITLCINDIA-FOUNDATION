@@ -41,10 +41,20 @@ export async function GET() {
             const url = `/${folder}/${file}`;
             if (!seenUrls.has(url)) {
               seenUrls.add(url);
+              let size = 0;
+              let mtime = 0;
+              try {
+                const stat = fs.statSync(path.join(folderPath, file));
+                size = stat.size;
+                mtime = stat.mtimeMs;
+              } catch (e) {}
+
               mediaList.push({
                 url,
                 name: file,
-                folder: folder
+                folder: folder,
+                size,
+                mtime,
               });
             }
           }
@@ -55,18 +65,29 @@ export async function GET() {
     // Also include root images if present
     const rootImages = ['logo.png', 'logo-full.png', 'qr.png', 'vs.jpg'];
     for (const rImg of rootImages) {
-      if (fs.existsSync(path.join(publicDir, rImg)) && !seenUrls.has(`/${rImg}`)) {
+      const rPath = path.join(publicDir, rImg);
+      if (fs.existsSync(rPath) && !seenUrls.has(`/${rImg}`)) {
         seenUrls.add(`/${rImg}`);
+        let size = 0;
+        let mtime = 0;
+        try {
+          const stat = fs.statSync(rPath);
+          size = stat.size;
+          mtime = stat.mtimeMs;
+        } catch (e) {}
+
         mediaList.push({
           url: `/${rImg}`,
           name: rImg,
-          folder: 'root'
+          folder: 'root',
+          size,
+          mtime,
         });
       }
     }
 
-    // Sort: newest uploads first
-    mediaList.reverse();
+    // Sort: newest uploads / modified first
+    mediaList.sort((a, b) => (b.mtime || 0) - (a.mtime || 0));
 
     return NextResponse.json({ success: true, media: mediaList });
   } catch (err: any) {
@@ -82,20 +103,113 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: 'Media URL is required' }, { status: 400 });
     }
 
-    // Only allow deleting files inside public/uploads or test files, prevent directory traversal
+    // Sanitize path and prevent directory traversal
     const safeUrl = url.replace(/^\/+/, '');
-    if (safeUrl.includes('..') || !safeUrl.startsWith('uploads/')) {
-      return NextResponse.json({ error: 'Only uploaded media can be deleted' }, { status: 403 });
+    if (safeUrl.includes('..') || path.isAbsolute(safeUrl)) {
+      return NextResponse.json({ error: 'Invalid file path' }, { status: 400 });
+    }
+
+    // Protect core system branding assets
+    const protectedFiles = [
+      'logo.png',
+      'logo-full.png',
+      'logo-icon.png',
+      'favicon.ico',
+      'favicon.png',
+      'apple-icon.png',
+      'qr.png',
+    ];
+    const filename = path.basename(safeUrl).toLowerCase();
+    if (protectedFiles.includes(filename) && safeUrl.startsWith('root')) {
+      return NextResponse.json({ error: 'Core system assets cannot be deleted' }, { status: 403 });
+    }
+
+    // Allowed directories for media deletion: uploads, gal, pro, ref
+    const allowedPrefixes = ['uploads/', 'gal/', 'pro/', 'ref/'];
+    const isAllowed =
+      allowedPrefixes.some((prefix) => safeUrl.startsWith(prefix)) ||
+      safeUrl.startsWith('vs.jpg');
+
+    if (!isAllowed) {
+      return NextResponse.json(
+        { error: 'Cannot delete files outside media directories' },
+        { status: 403 }
+      );
     }
 
     const targetPath = path.join(process.cwd(), 'public', safeUrl);
+    let deleted = false;
+
     if (fs.existsSync(targetPath)) {
       fs.unlinkSync(targetPath);
+      deleted = true;
+    }
+
+    // Also mirror delete from src/images if it exists
+    const srcImagesPath = path.join(process.cwd(), 'src', 'images', safeUrl);
+    if (fs.existsSync(srcImagesPath)) {
+      try {
+        fs.unlinkSync(srcImagesPath);
+        deleted = true;
+      } catch (e) {}
+    }
+
+    if (deleted) {
       return NextResponse.json({ success: true, message: 'Media file deleted successfully' });
     }
 
-    return NextResponse.json({ error: 'File not found' }, { status: 404 });
+    return NextResponse.json({ error: 'File not found on server' }, { status: 404 });
   } catch (err: any) {
+    console.error('DELETE media error:', err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}
+
+export async function PUT(req: Request) {
+  try {
+    const body = await req.json().catch(() => ({}));
+    const { oldUrl, newName } = body;
+
+    if (!oldUrl || !newName) {
+      return NextResponse.json({ error: 'oldUrl and newName are required' }, { status: 400 });
+    }
+
+    const safeOldUrl = oldUrl.replace(/^\/+/, '');
+    if (safeOldUrl.includes('..') || path.isAbsolute(safeOldUrl)) {
+      return NextResponse.json({ error: 'Invalid path' }, { status: 400 });
+    }
+
+    const oldPath = path.join(process.cwd(), 'public', safeOldUrl);
+    if (!fs.existsSync(oldPath)) {
+      return NextResponse.json({ error: 'Original file not found' }, { status: 404 });
+    }
+
+    const dir = path.dirname(safeOldUrl);
+    const ext = path.extname(safeOldUrl);
+    const sanitizedBase = newName.trim().replace(/[^a-zA-Z0-9_\-\.]/g, '_');
+    const finalFilename = sanitizedBase.endsWith(ext) ? sanitizedBase : `${sanitizedBase}${ext}`;
+    const newPath = path.join(process.cwd(), 'public', dir, finalFilename);
+
+    fs.renameSync(oldPath, newPath);
+
+    // Also mirror rename in src/images if present
+    const srcOldPath = path.join(process.cwd(), 'src', 'images', safeOldUrl);
+    const srcNewPath = path.join(process.cwd(), 'src', 'images', dir, finalFilename);
+    if (fs.existsSync(srcOldPath)) {
+      try {
+        fs.renameSync(srcOldPath, srcNewPath);
+      } catch (e) {}
+    }
+
+    const newUrl = `/${dir}/${finalFilename}`.replace(/^\/\.\//, '/');
+    return NextResponse.json({
+      success: true,
+      newUrl,
+      name: finalFilename,
+      message: 'File renamed successfully',
+    });
+  } catch (err: any) {
+    console.error('PUT media error:', err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

@@ -193,23 +193,6 @@ export function DonationModal() {
       // Helper to finalize donation after payment
       const finalizeDonation = async (confirmedPaymentId: string, customReceiptNo?: string) => {
         const finalReceiptNo = customReceiptNo || generatedReceiptNo;
-        try {
-          await fetch('/api/donations/notify', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              donor_name: fullName.trim(),
-              donor_email: email.trim(),
-              donor_phone: '',
-              amount: amount,
-              type: isMonthly ? 'monthly' : 'one-time',
-              payment_id: confirmedPaymentId,
-              receipt_no: finalReceiptNo,
-            }),
-          });
-        } catch (notifyErr) {
-          console.warn('Could not dispatch receipt notification:', notifyErr);
-        }
 
         const details = {
           receiptNo: finalReceiptNo,

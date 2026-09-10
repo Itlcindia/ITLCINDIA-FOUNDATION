@@ -1,4 +1,5 @@
 'use client';
+import { DonateButton } from '@/components/ui/donate-button';
 
 import React from 'react';
 import Image from 'next/image';
@@ -108,15 +109,7 @@ export function PageHero({
               <div>{children}</div>
             ) : (
               <div className="flex flex-wrap items-center gap-3.5">
-                <button
-                  type="button"
-                  onClick={() => openDonationModal()}
-                  className="bg-[#168039] hover:bg-[#137233] text-white rounded-full px-7 py-3 text-sm sm:text-base font-semibold flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer"
-                >
-                  <Heart className="w-4 h-4 fill-white text-white" />
-                  <span>Donate Now</span>
-                  <ArrowRight className="w-4 h-4 ml-0.5" />
-                </button>
+                <DonateButton size="lg" showArrow />
                 <Link
                   href="/volunteer"
                   className="bg-white hover:bg-gray-50 text-gray-800 border border-[#c8e2d3] rounded-full px-6 py-3 text-sm sm:text-base font-semibold flex items-center gap-2 shadow-xs transition-all duration-200 cursor-pointer"

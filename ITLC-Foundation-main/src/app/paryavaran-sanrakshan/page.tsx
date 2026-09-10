@@ -1,4 +1,5 @@
 'use client';
+import { DonateButton } from '@/components/ui/donate-button';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -80,13 +81,11 @@ export default function ParyavaranSanrakshanPage() {
       <PageHero
         title="Leading Environmental NGO in Lucknow"
         subtitle="Protecting Nature, Planting Trees, and Creating Climate Awareness Across Uttar Pradesh. Join Our Green Mission."
-        imageUrl="/pro/ab.png"
+        imageUrl="/causes/environment_hero.jpg"
         imageHint="hands planting sapling"
       >
         <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Button size="lg" className="rounded-full cursor-pointer" onClick={() => openDonationModal()}>
-              <Sprout className="mr-2 size-5" /> Donate for Environment
-            </Button>
+            <DonateButton size="lg" label="Donate for Environment" />
             <Button asChild size="lg" variant="outline" className="rounded-full bg-transparent text-white hover:bg-white hover:text-primary border-white hover:border-white">
                 <Link href="/contact">
                     <Users className="mr-2 size-5" /> Volunteer for Green Lucknow
@@ -208,9 +207,7 @@ export default function ParyavaranSanrakshanPage() {
           <h2 className="text-3xl font-bold">Help Us Build a Greener Uttar Pradesh</h2>
           <p className="mt-4 max-w-2xl mx-auto opacity-90">Your support can help us plant more trees, clean our rivers, and create a greener tomorrow. Join the best environmental NGO in Lucknow.</p>
           <div className="mt-8 flex flex-col sm:flex-row gap-4 items-center justify-center">
-            <Button size="lg" className="rounded-full bg-white text-primary hover:bg-gray-100 cursor-pointer" onClick={() => openDonationModal()}>
-              Donate for a Green Future
-            </Button>
+            <DonateButton size="lg" label="Donate for a Green Future" />
             <Button asChild size="lg" variant="outline" className="rounded-full border-white text-white hover:bg-white hover:text-primary">
                 <Link href="/contact">Become an Environment Volunteer</Link>
             </Button>

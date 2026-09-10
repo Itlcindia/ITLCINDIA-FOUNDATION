@@ -3,6 +3,8 @@ import nodemailer from 'nodemailer';
 import fs from 'fs';
 import path from 'path';
 
+const recentlyNotified = new Map<string, number>();
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -26,6 +28,23 @@ export async function POST(req: NextRequest) {
     const year = new Date().getFullYear();
     const receiptNo =
       customReceiptNo || `ITLC-80G-${Math.floor(100000 + Math.random() * 900000)}-${year}`;
+
+    // DEDUPLICATION: Prevent duplicate email and record creation for the same transaction
+    const dedupeKey = `${payment_id || receiptNo}_${amount}`;
+    const now = Date.now();
+    const lastSent = recentlyNotified.get(dedupeKey);
+    if (lastSent && now - lastSent < 10 * 60 * 1000) {
+      console.log(`[NOTIFY] Duplicate notification skipped for key: ${dedupeKey}`);
+      return NextResponse.json({
+        success: true,
+        receipt_no: receiptNo,
+        email_sent: true,
+        sms_sent: true,
+        message: 'Notification already dispatched for this transaction.',
+      });
+    }
+    recentlyNotified.set(dedupeKey, now);
+
     const formattedDate = new Date().toLocaleDateString('en-IN', {
       day: 'numeric',
       month: 'long',
@@ -203,22 +222,31 @@ export async function POST(req: NextRequest) {
       if (fs.existsSync(donationsPath)) {
         currentList = JSON.parse(fs.readFileSync(donationsPath, 'utf8'));
       }
-      const newRecord = {
-        id: `don_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
-        receiptNo: receiptNo,
-        donorName: donor_name.trim(),
-        donorEmail: (donor_email || '').trim(),
-        donorPhone: (donor_phone || '').trim(),
-        amount: Number(amount),
-        type: type,
-        paymentId: payment_id || `pay_${Date.now().toString(36)}`,
-        date: formattedDate,
-        createdAt: new Date().toISOString(),
-        status: 'Verified (80G)',
-      };
-      currentList.unshift(newRecord);
-      fs.writeFileSync(donationsPath, JSON.stringify(currentList, null, 2), 'utf8');
-      console.log(`[DONATION LOG] Successfully saved donation ${receiptNo} for ${donor_name}`);
+      const alreadyExists = currentList.some(
+        (item) =>
+          (payment_id && (item.paymentId === payment_id || item.payment_id === payment_id)) ||
+          (receiptNo && (item.receiptNo === receiptNo || item.receipt_no === receiptNo))
+      );
+      if (!alreadyExists) {
+        const newRecord = {
+          id: `don_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+          receiptNo: receiptNo,
+          donorName: donor_name.trim(),
+          donorEmail: (donor_email || '').trim(),
+          donorPhone: (donor_phone || '').trim(),
+          amount: Number(amount),
+          type: type,
+          paymentId: payment_id || `pay_${Date.now().toString(36)}`,
+          date: formattedDate,
+          createdAt: new Date().toISOString(),
+          status: 'Verified (80G)',
+        };
+        currentList.unshift(newRecord);
+        fs.writeFileSync(donationsPath, JSON.stringify(currentList, null, 2), 'utf8');
+        console.log(`[DONATION LOG] Successfully saved donation ${receiptNo} for ${donor_name}`);
+      } else {
+        console.log(`[DONATION LOG] Skipped saving duplicate record for payment ${payment_id || receiptNo}`);
+      }
     } catch (saveErr) {
       console.error('[DONATION LOG ERROR] Could not save to donations.json:', saveErr);
     }

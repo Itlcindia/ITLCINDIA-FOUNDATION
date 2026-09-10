@@ -377,36 +377,42 @@ export default function ProjectsPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 4. FINAL CALL TO ACTION                                                   */}
+      {/* 4. FINAL CALL TO ACTION (FLOATING CARD WITH PRIMARY BLUE THEME)           */}
       {/* ========================================================================= */}
-      <section className="bg-gradient-to-br from-[#083a27] via-[#0e5237] to-[#083a27] text-white py-16 md:py-24">
-        <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
-          <span className="inline-block text-emerald-300 font-bold text-xs md:text-sm uppercase tracking-widest font-headline">
-            TOGETHER FOR A BETTER TOMORROW —
-          </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black font-headline max-w-3xl mx-auto leading-tight">
-            <span>Let&apos;s create a greener, </span>
-            <span className="text-emerald-300">kinder and stronger Uttar Pradesh.</span>
-          </h2>
-          <p className="text-sm sm:text-base text-white/80 max-w-2xl mx-auto leading-relaxed">
-            Your support can help turn ideas into action and action into lasting impact. Sponsor a project or volunteer with our field team today.
-          </p>
-          <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
-            <button
-              type="button"
-              onClick={() => openDonationModal()}
-              className="bg-white hover:bg-emerald-50 text-[#083a27] font-bold text-xs sm:text-sm px-8 py-3.5 rounded-full shadow-lg transition-all cursor-pointer inline-flex items-center gap-2"
-            >
-              <Heart className="w-4 h-4 text-rose-500 fill-rose-500" />
-              <span>Donate Now (80G Tax Exemption)</span>
-            </button>
-            <Link
-              href="/volunteer"
-              className="border border-white/50 hover:bg-white/10 text-white font-medium text-xs sm:text-sm px-7 py-3.5 rounded-full transition-all inline-flex items-center gap-2"
-            >
-              <Users className="w-4 h-4" />
-              <span>Join as Volunteer</span>
-            </Link>
+      <section className="py-12 md:py-18 pb-16 md:pb-24 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0f5b9e] via-[#0d4f8b] to-[#08365c] text-white p-8 sm:p-12 md:p-16 text-center space-y-6 shadow-2xl border border-blue-300/20">
+          {/* Subtle decorative glow accents */}
+          <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-white/5 blur-2xl pointer-events-none" />
+          <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-emerald-400/10 blur-2xl pointer-events-none" />
+
+          <div className="relative z-10 space-y-6">
+            <span className="inline-block text-sky-200 font-bold text-xs md:text-sm uppercase tracking-widest font-headline">
+              TOGETHER FOR A BETTER TOMORROW —
+            </span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black font-headline max-w-3xl mx-auto leading-tight">
+              <span>Let&apos;s create a greener, </span>
+              <span className="text-emerald-300">kinder and stronger Uttar Pradesh.</span>
+            </h2>
+            <p className="text-sm sm:text-base text-blue-100/90 max-w-2xl mx-auto leading-relaxed">
+              Your support can help turn ideas into action and action into lasting impact. Sponsor a project or volunteer with our field team today.
+            </p>
+            <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
+              <button
+                type="button"
+                onClick={() => openDonationModal()}
+                className="bg-white hover:bg-blue-50 text-[#0f5b9e] font-bold text-xs sm:text-sm px-8 py-3.5 rounded-full shadow-lg hover:shadow-xl transition-all cursor-pointer inline-flex items-center gap-2"
+              >
+                <Heart className="w-4 h-4 text-rose-500 fill-rose-500" />
+                <span>Donate Now (80G Tax Exemption)</span>
+              </button>
+              <Link
+                href="/volunteer"
+                className="border border-white/60 hover:bg-white/15 text-white font-medium text-xs sm:text-sm px-7 py-3.5 rounded-full transition-all inline-flex items-center gap-2"
+              >
+                <Users className="w-4 h-4" />
+                <span>Join as Volunteer</span>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

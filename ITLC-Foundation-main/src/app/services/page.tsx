@@ -31,7 +31,7 @@ const services = [
       'Support for education for underprivileged children.',
       'Women empowerment and skill development workshops.'
     ],
-    image: 'https://picsum.photos/seed/service1/600/400',
+    image: '/causes/social_welfare_hero.jpg',
     imageHint: 'food distribution',
     href: '/social-welfare',
   },
@@ -45,7 +45,7 @@ const services = [
       'Waste management and recycling workshops in communities.',
       'Climate change awareness programs in schools.'
     ],
-    image: 'https://picsum.photos/seed/service2/600/400',
+    image: '/causes/environment_hero.jpg',
     imageHint: 'tree plantation',
     href: '/paryavaran-sanrakshan',
   },
@@ -59,7 +59,7 @@ const services = [
       'Free medical treatment and vaccination camps.',
       'Adoption drives to find loving homes for rescued animals.'
     ],
-    image: 'https://picsum.photos/seed/service3/600/400',
+    image: '/causes/animal_welfare_hero.jpg',
     imageHint: 'feeding dog',
     href: '/animal-welfare',
   },
@@ -71,7 +71,7 @@ export default function ServicesPage() {
       <PageHero
         title="Our NGO Services in Lucknow"
         subtitle="Discover how our NGO contributes to social welfare, environment, and animal care in Lucknow and across Uttar Pradesh."
-        imageUrl="/pro/ab.png"
+        imageUrl="/causes/social_welfare_hero.jpg"
         imageHint="helping hands"
       />
       <div className="container mx-auto px-4 py-16 md:py-24">

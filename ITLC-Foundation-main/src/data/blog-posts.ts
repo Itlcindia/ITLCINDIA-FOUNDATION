@@ -5,6 +5,7 @@ export interface BlogPost {
   category: string;
   excerpt: string;
   author: string;
+  authorRole?: string;
   date: string;
   readTime: string;
   image: string;
@@ -12,6 +13,11 @@ export interface BlogPost {
   tags: string[];
   keyPoints: string[];
   content: string;
+  faqs?: { question: string; answer: string }[];
+  metaTitle?: string;
+  metaDescription?: string;
+  status?: 'published' | 'draft';
+  isFeatured?: boolean;
 }
 
 import initialBlogs from './blogs.json';

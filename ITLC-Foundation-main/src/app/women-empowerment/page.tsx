@@ -1,4 +1,5 @@
 'use client';
+import { DonateButton } from '@/components/ui/donate-button';
 
 import React from 'react';
 import { PageHero } from '@/components/layout/page-hero';
@@ -58,7 +59,7 @@ export default function WomenEmpowermentPage() {
           </>
         }
         subtitle="Empowering women in rural and semi-urban Uttar Pradesh through vocational skills, financial independence, and healthcare dignity."
-        imageUrl="/pro/ser.png"
+        imageUrl="/causes/women_empowerment_hero.jpg"
         imageHint="women tailoring and learning"
       />
 
@@ -95,7 +96,7 @@ export default function WomenEmpowermentPage() {
 
             <div className="lg:col-span-5 relative h-72 sm:h-84 w-full rounded-2xl overflow-hidden shadow-md">
               <Image
-                src="/pro/ser.png"
+                src="/causes/women_shg_workshop.jpg"
                 alt="Women empowerment skill workshop"
                 fill
                 className="object-cover"
@@ -178,14 +179,11 @@ export default function WomenEmpowermentPage() {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <button
-              type="button"
-              onClick={() => openDonationModal(1500)}
-              className="px-8 py-3.5 rounded-full bg-[#168039] hover:bg-[#137233] text-white font-bold text-sm shadow-md hover:shadow-lg transition-all cursor-pointer inline-flex items-center gap-2"
-            >
-              <Heart className="w-4 h-4 fill-white" />
-              <span>Sponsor Training (₹1,500 - 80G Exempt)</span>
-            </button>
+            <DonateButton
+              size="lg"
+              amount={1500}
+              label="Sponsor Training (₹1,500 - 80G Exempt)"
+            />
             <Link
               href="/volunteer"
               className="px-8 py-3.5 rounded-full border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold text-sm transition-all"

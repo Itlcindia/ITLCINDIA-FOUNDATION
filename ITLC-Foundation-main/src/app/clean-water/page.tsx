@@ -1,4 +1,5 @@
 'use client';
+import { DonateButton } from '@/components/ui/donate-button';
 
 import React from 'react';
 import { PageHero } from '@/components/layout/page-hero';
@@ -52,7 +53,7 @@ export default function CleanWaterPage() {
       <PageHero
         title="Clean Water & Sanitation"
         subtitle="Ensuring access to safe drinking water, hygienic storage, and preventive public health education across vulnerable communities in Uttar Pradesh."
-        imageUrl="/pro/ab.png"
+        imageUrl="/causes/clean_water_hero.jpg"
         imageHint="clean drinking water glass"
       />
 
@@ -89,7 +90,7 @@ export default function CleanWaterPage() {
 
             <div className="lg:col-span-5 relative h-72 sm:h-84 w-full rounded-2xl overflow-hidden shadow-md">
               <Image
-                src="/pro/ab.png"
+                src="/causes/clean_water_hygiene.jpg"
                 alt="Clean water community campaign"
                 fill
                 className="object-cover"
@@ -175,14 +176,11 @@ export default function CleanWaterPage() {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <button
-              type="button"
-              onClick={() => openDonationModal(500)}
-              className="px-8 py-3.5 rounded-full bg-[#168039] hover:bg-[#137233] text-white font-bold text-sm shadow-md hover:shadow-lg transition-all cursor-pointer inline-flex items-center gap-2"
-            >
-              <Heart className="w-4 h-4 fill-white" />
-              <span>Sponsor Clean Water Unit (₹500 - 80G Exempt)</span>
-            </button>
+            <DonateButton
+              size="lg"
+              amount={500}
+              label="Sponsor Clean Water Unit (₹500 - 80G Exempt)"
+            />
             <Link
               href="/volunteer"
               className="px-8 py-3.5 rounded-full border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold text-sm transition-all"

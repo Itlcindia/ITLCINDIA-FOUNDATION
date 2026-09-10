@@ -58,7 +58,7 @@ export default function TransparencyPage() {
       <PageHero
         title="Transparency & Trust at Our NGO"
         subtitle="We maintain complete transparency in all our activities and donations. Our supporters can view reports, legal documents, and impact updates anytime."
-        imageUrl="https://picsum.photos/seed/transparency-hero/1920/1080"
+        imageUrl="/causes/gallery_hero.jpg"
         imageHint="magnifying glass documents"
       />
       <motion.div

@@ -79,6 +79,7 @@ export async function POST(req: NextRequest) {
       category: body.category || 'General',
       excerpt: body.excerpt || '',
       author: body.author || 'ITLC Foundation Editorial Team',
+      authorRole: body.authorRole ? String(body.authorRole).trim() : '',
       date: body.date || new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
       readTime: body.readTime || '5 min read',
       image: images[0] || '/pro/ab.png',
@@ -86,6 +87,18 @@ export async function POST(req: NextRequest) {
       tags: Array.isArray(body.tags) ? body.tags : (body.tags ? body.tags.split(',').map((t: string) => t.trim()) : ['Community', 'UP']),
       keyPoints: Array.isArray(body.keyPoints) ? body.keyPoints : (body.keyPoints ? body.keyPoints.split('\n').map((k: string) => k.trim()).filter(Boolean) : []),
       content: body.content || '',
+      faqs: Array.isArray(body.faqs)
+        ? body.faqs
+            .filter((f: any) => f && (typeof f.question === 'string' && f.question.trim()))
+            .map((f: any) => ({
+              question: String(f.question).trim(),
+              answer: String(f.answer || '').trim(),
+            }))
+        : [],
+      metaTitle: body.metaTitle ? String(body.metaTitle).trim() : '',
+      metaDescription: body.metaDescription ? String(body.metaDescription).trim() : '',
+      status: body.status === 'draft' ? 'draft' : 'published',
+      isFeatured: Boolean(body.isFeatured),
       updatedAt: new Date().toISOString(),
     };
 

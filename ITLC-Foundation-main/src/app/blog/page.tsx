@@ -71,24 +71,39 @@ export default function BlogListingPage() {
     }, 50);
   };
 
-  // Mapping posts for sections
-  const featuredMain = posts[0];
-  const secondaryFeatured = (posts.length > 1 ? posts.slice(1, 5) : []).concat(posts).slice(0, 4);
+  // Filter out drafts for public visitors
+  const publicPosts = useMemo(() => {
+    return posts.filter((p) => p.status !== 'draft');
+  }, [posts]);
+
+  // Mapping posts for sections: prioritize isFeatured post for hero banner
+  const featuredMain = useMemo(() => {
+    return publicPosts.find((p) => p.isFeatured) || publicPosts[0] || posts[0];
+  }, [publicPosts, posts]);
+
+  const secondaryFeatured = useMemo(() => {
+    const list = publicPosts.filter((p) => p.slug !== featuredMain?.slug);
+    return (list.length > 0 ? list : publicPosts).slice(0, 4);
+  }, [publicPosts, featuredMain]);
 
   // Trending (4 cards)
-  const trendingPosts = (posts.length >= 4 
-    ? [posts[1], posts[0], posts[2], posts[3]] 
-    : [...posts, ...posts]).slice(0, 4);
+  const trendingPosts = useMemo(() => {
+    return (publicPosts.length >= 4 
+      ? [publicPosts[1], publicPosts[0], publicPosts[2], publicPosts[3]] 
+      : [...publicPosts, ...publicPosts]).slice(0, 4);
+  }, [publicPosts]);
 
   // Editor Pick (approx 6 posts: 3 in row 1, 3 in row 2)
-  const editorPickPosts = (posts.length >= 6
-    ? [posts[3], posts[4], posts[5], posts[0], posts[1], posts[2]]
-    : [...posts, ...posts]).slice(0, 6);
+  const editorPickPosts = useMemo(() => {
+    return (publicPosts.length >= 6
+      ? [publicPosts[3], publicPosts[4], publicPosts[5], publicPosts[0], publicPosts[1], publicPosts[2]]
+      : [...publicPosts, ...publicPosts]).slice(0, 6);
+  }, [publicPosts]);
 
   // Filtered posts for Tag or All Posts view
   const filteredPosts = activeTag
-    ? posts.filter((p) => p.tags && p.tags.some((t) => t.toLowerCase() === activeTag.toLowerCase()))
-    : posts;
+    ? publicPosts.filter((p) => p.tags && p.tags.some((t) => t.toLowerCase() === activeTag.toLowerCase()))
+    : publicPosts;
 
   return (
     <div className="bg-[#dff0e6] text-gray-900 min-h-screen pb-16">
@@ -129,10 +144,17 @@ export default function BlogListingPage() {
 
                 {/* Content pinned near the lower portion */}
                 <div className="absolute bottom-0 inset-x-0 p-5 sm:p-7 flex flex-col justify-end text-left">
-                  {/* Category badge with small blue background */}
-                  <span className="inline-block self-start bg-[#0f5b9e] text-white text-[11px] font-bold px-2.5 py-1 rounded-[4px] uppercase tracking-wider mb-2.5 shadow-2xs">
-                    {featuredMain.category}
-                  </span>
+                  {/* Category & Featured badge */}
+                  <div className="flex items-center gap-2 mb-2.5 flex-wrap">
+                    <span className="inline-block bg-[#0f5b9e] text-white text-[11px] font-bold px-2.5 py-1 rounded-[4px] uppercase tracking-wider shadow-2xs">
+                      {featuredMain.category}
+                    </span>
+                    {featuredMain.isFeatured && (
+                      <span className="inline-block bg-amber-500 text-white text-[10px] font-black px-2 py-0.5 rounded-[4px] uppercase tracking-wider shadow-2xs">
+                        ★ Featured Story
+                      </span>
+                    )}
+                  </div>
 
                   {/* Large White Title */}
                   <h1 className="text-xl sm:text-2xl lg:text-[26px] xl:text-3xl font-bold text-white leading-snug line-clamp-3 group-hover:text-blue-100 transition-colors mb-3">
@@ -146,6 +168,7 @@ export default function BlogListingPage() {
                     </div>
                     <span className="font-medium truncate max-w-[220px]">
                       {featuredMain.author || 'ITLC Editorial'}
+                      {featuredMain.authorRole ? ` (${featuredMain.authorRole})` : ''}
                     </span>
                     <span className="text-white/40">&bull;</span>
                     <span className="text-white/75">{featuredMain.date}</span>

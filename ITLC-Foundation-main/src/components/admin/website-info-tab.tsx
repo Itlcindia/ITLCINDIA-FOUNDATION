@@ -156,14 +156,24 @@ export function WebsiteInfoTab({ cms, setCms, onSaveAll }: WebsiteInfoTabProps) 
                 Live Header Bar Preview
               </span>
               <div className="bg-white border border-slate-200 p-3 rounded-2xl flex items-center justify-between shadow-xs">
-                <div className="relative h-12 w-auto flex items-center shrink-0">
-                  <Image
-                    src={site.logo || '/ref/logo.png'}
-                    alt="Logo Preview"
-                    width={140}
-                    height={48}
-                    className="h-11 w-auto object-contain"
-                  />
+                <div className="flex items-center gap-2">
+                  <div className="relative h-10 w-10 flex items-center justify-center shrink-0">
+                    <Image
+                      src={site.logo || '/ref/logo.png'}
+                      alt="Logo Preview"
+                      width={40}
+                      height={40}
+                      className="h-full w-full object-contain"
+                    />
+                  </div>
+                  <div className="flex flex-col items-center text-center">
+                    <span className="font-extrabold text-xs uppercase text-[#168039] font-headline tracking-tight leading-none text-center">
+                      {site.name || 'ITLC FOUNDATION'}
+                    </span>
+                    <span className="text-[6.2px] text-slate-400 leading-tight mt-0.5 tracking-normal whitespace-nowrap text-center">
+                      {site.tagline || 'Empowering Communities Through Learning & Care.'}
+                    </span>
+                  </div>
                 </div>
                 <div className="flex items-center gap-2 text-xs font-semibold text-[#0f5b9e]">
                   <span className="hidden sm:inline">Home</span>

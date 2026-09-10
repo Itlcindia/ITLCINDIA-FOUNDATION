@@ -1,4 +1,5 @@
 'use client';
+import { DonateButton } from '@/components/ui/donate-button';
 
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
@@ -291,9 +292,7 @@ export default function ContactPage() {
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto mb-6">Your support is vital for our social welfare, education, and environmental projects in Uttar Pradesh.</p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <Button size="lg" className="rounded-full cursor-pointer bg-[#168039] hover:bg-[#137233] text-white" onClick={() => openDonationModal()}>
-                  Donate Now <Heart className="ml-2 fill-current" />
-                </Button>
+                <DonateButton size="lg" />
                 <Button asChild size="lg" variant="outline" className="rounded-full border-[#c8e2d3]">
                     <Link href="/volunteer">Become a Volunteer in Lucknow</Link>
                 </Button>

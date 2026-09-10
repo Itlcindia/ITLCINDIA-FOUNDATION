@@ -1,4 +1,5 @@
 'use client';
+import { DonateButton } from '@/components/ui/donate-button';
 
 import React, { use, useState, useEffect } from 'react';
 import { getBlogPostBySlug, getRelatedBlogPosts, getAllBlogs, BlogPost } from '@/data/blog-posts';
@@ -224,6 +225,7 @@ export default function BlogPostDetailPage({ params }: { params: Promise<{ slug:
   const initialPost = getBlogPostBySlug(slug);
 
   const [post, setPost] = useState<BlogPost | undefined>(initialPost);
+  const [loading, setLoading] = useState(!initialPost);
   const [blogAds, setBlogAds] = useState<any>(null);
   const [activeImgIdx, setActiveImgIdx] = useState(0);
   const [openFaqIdx, setOpenFaqIdx] = useState<number | null>(0);
@@ -249,6 +251,8 @@ export default function BlogPostDetailPage({ params }: { params: Promise<{ slug:
         }
       } catch (e) {
         console.error('Error loading dynamic blog:', e);
+      } finally {
+        setLoading(false);
       }
 
       try {
@@ -267,6 +271,38 @@ export default function BlogPostDetailPage({ params }: { params: Promise<{ slug:
     loadData();
   }, [slug]);
 
+  // Set dynamic SEO title and meta description
+  useEffect(() => {
+    if (post) {
+      if (post.metaTitle) {
+        document.title = `${post.metaTitle} | ITLC Foundation`;
+      } else if (post.title) {
+        document.title = `${post.title} | ITLC Foundation`;
+      }
+
+      if (post.metaDescription) {
+        let metaTag = document.querySelector('meta[name="description"]');
+        if (!metaTag) {
+          metaTag = document.createElement('meta');
+          metaTag.setAttribute('name', 'description');
+          document.head.appendChild(metaTag);
+        }
+        metaTag.setAttribute('content', post.metaDescription);
+      }
+    }
+  }, [post]);
+
+  if (loading) {
+    return (
+      <div className="bg-slate-50 min-h-screen flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="w-10 h-10 border-4 border-[#168039] border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-sm font-bold text-gray-600">Loading article...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!post) {
     notFound();
   }
@@ -276,7 +312,7 @@ export default function BlogPostDetailPage({ params }: { params: Promise<{ slug:
   const relatedPosts: BlogPost[] = allOtherPosts;
   const bottomFourPosts: BlogPost[] = allOtherPosts.slice(0, 4);
 
-  const faqs = (post as any)?.faqs && Array.isArray((post as any).faqs) && (post as any).faqs.length >= 4
+  const faqs = (post as any)?.faqs && Array.isArray((post as any).faqs) && (post as any).faqs.length > 0
     ? (post as any).faqs
     : getBlogFaqs(post.category, post.slug);
 
@@ -442,6 +478,9 @@ export default function BlogPostDetailPage({ params }: { params: Promise<{ slug:
               <span className="flex items-center gap-1">
                 <User className="w-3.5 h-3.5 text-[#168039]" />
                 <span>{post.author}</span>
+                {post.authorRole && (
+                  <span className="text-slate-400 font-medium">({post.authorRole})</span>
+                )}
               </span>
             </div>
 
@@ -544,6 +583,27 @@ export default function BlogPostDetailPage({ params }: { params: Promise<{ slug:
               </div>
             </div>
           )}
+
+          {/* Author Profile Attribution Card */}
+          <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 sm:p-5 flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-emerald-100 text-[#168039] flex items-center justify-center font-black text-base shrink-0">
+              {post.author ? post.author.charAt(0) : 'I'}
+            </div>
+            <div>
+              <div className="text-[11px] font-bold uppercase tracking-wider text-[#168039]">Written &amp; Field-Verified By</div>
+              <div className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2 flex-wrap">
+                <span>{post.author}</span>
+                {post.authorRole && (
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-[#168039] font-semibold">
+                    {post.authorRole}
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-slate-500 mt-0.5">
+                ITLC Foundation Grassroots Research &amp; Community Development Team
+              </p>
+            </div>
+          </div>
 
           {/* Share Buttons Strip */}
           <div className="border-t border-slate-100 pt-6 flex flex-wrap items-center justify-between gap-4">
@@ -765,14 +825,11 @@ export default function BlogPostDetailPage({ params }: { params: Promise<{ slug:
               <p className="text-xs text-white/80 leading-relaxed">
                 Your monthly or one-time donation funds native tree plantation, food drives, and emergency veterinary aid.
               </p>
-              <button
-                type="button"
-                onClick={() => openDonationModal()}
-                className="w-full bg-[#168039] hover:bg-[#137233] text-white text-xs font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
-              >
-                <Heart className="w-4 h-4 fill-white text-white" />
-                <span>Donate to ITLC Foundation</span>
-              </button>
+              <DonateButton
+                size="md"
+                className="w-full"
+                label="Donate to ITLC Foundation"
+              />
             </div>
 
             {/* 3. Focus Areas / Causes Quick Chips */}

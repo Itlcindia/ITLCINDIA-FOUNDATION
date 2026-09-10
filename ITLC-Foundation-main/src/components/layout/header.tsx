@@ -1,4 +1,5 @@
 'use client';
+import { DonateButton } from '@/components/ui/donate-button';
 
 import Link from 'next/link';
 import Image from 'next/image';
@@ -52,7 +53,15 @@ export function Header() {
   const [isMobileCausesOpen, setIsMobileCausesOpen] = useState(false);
   const causesRef = useRef<HTMLDivElement>(null);
   const { openDonationModal } = useDonationModal();
-  const [logo, setLogo] = useState<string>('/ref/logo.png');
+  const [brandInfo, setBrandInfo] = useState<{
+    name: string;
+    tagline: string;
+    logo: string;
+  }>({
+    name: 'ITLC FOUNDATION',
+    tagline: 'Empowering Communities Through Learning & Care.',
+    logo: '/ref/logo.png',
+  });
 
   useEffect(() => {
     fetch('/api/content/cms', { cache: 'no-store' })
@@ -61,7 +70,13 @@ export function Header() {
         return res.json();
       })
       .then((data) => {
-        if (data?.site?.logo) setLogo(data.site.logo);
+        if (data?.site) {
+          setBrandInfo({
+            name: (data.site.name || 'ITLC FOUNDATION').toUpperCase(),
+            tagline: data.site.tagline || 'Empowering Communities Through Learning & Care.',
+            logo: (data.site.logo && !data.site.logo.includes('1788860094660')) ? data.site.logo : '/ref/logo.png',
+          });
+        }
       })
       .catch(() => {});
   }, []);
@@ -93,18 +108,6 @@ export function Header() {
     }, 150);
     return () => clearTimeout(timer);
   }, [router]);
-
-  useEffect(() => {
-    fetch('/api/content/cms')
-      .then((res) => {
-        if (!res.ok) return null;
-        return res.json();
-      })
-      .then((data) => {
-        if (data?.site?.logo) setLogo(data.site.logo);
-      })
-      .catch(() => {});
-  }, []);
 
   // Close causes dropdown when clicking outside
   useEffect(() => {
@@ -155,17 +158,30 @@ export function Header() {
   return (
     <header className="sticky top-0 z-[70] w-full bg-white/95 backdrop-blur-md text-[#0f5b9e] shadow-xs border-b border-slate-200/80 transition-all">
       <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 h-[72px] md:h-[80px] flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" prefetch={true} className="flex items-center group cursor-pointer py-1" aria-label="ITLC Foundation Home">
-          <div className="relative h-14 md:h-[72px] w-auto flex items-center shrink-0">
+        {/* Logo + Text Lockup: Emblem on Left, Clear Crisp Text Beside It */}
+        <Link
+          href="/"
+          prefetch={true}
+          className="flex items-center gap-2.5 sm:gap-3 group cursor-pointer py-1 select-none"
+          aria-label="ITLC Foundation Home"
+        >
+          <div className="relative h-12 w-12 sm:h-14 sm:w-14 md:h-[58px] md:w-[58px] flex items-center justify-center shrink-0">
             <Image
-              src={logo || '/ref/logo.png'}
-              alt="ITLC Foundation Logo"
-              width={200}
-              height={72}
-              className="h-[54px] md:h-[66px] w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+              src={brandInfo.logo || '/ref/logo.png'}
+              alt="ITLC Foundation Emblem"
+              width={64}
+              height={64}
+              className="h-full w-full object-contain transition-transform duration-200 group-hover:scale-105"
               priority
             />
+          </div>
+          <div className="flex flex-col justify-center items-center text-center leading-tight">
+            <span className="font-extrabold text-[17px] sm:text-[19px] md:text-[20px] font-headline tracking-tight text-[#168039] uppercase group-hover:text-[#137233] transition-colors leading-none text-center">
+              {brandInfo.name || 'ITLC FOUNDATION'}
+            </span>
+            <span className="text-[6.2px] sm:text-[7px] md:text-[7.5px] font-semibold text-slate-500 tracking-[0.01em] sm:tracking-[0.015em] md:tracking-[0.02em] leading-tight mt-1 block whitespace-nowrap text-center">
+              {brandInfo.tagline || 'Empowering Communities Through Learning & Care.'}
+            </span>
           </div>
         </Link>
 
@@ -352,26 +368,12 @@ export function Header() {
 
         {/* Right CTA Button (Desktop) */}
         <div className="hidden lg:flex items-center">
-          <button
-            type="button"
-            onClick={() => openDonationModal()}
-            className="bg-[#168039] hover:bg-[#137233] text-white rounded-full px-5 py-2 text-xs md:text-sm font-medium flex items-center gap-1.5 shadow-sm transition-all duration-200 hover:shadow-md cursor-pointer"
-          >
-            <Heart className="w-3.5 h-3.5 fill-white text-white" />
-            <span>Donate Now</span>
-          </button>
+          <DonateButton size="md" />
         </div>
 
         {/* Mobile Navigation Sheet (Visible on screens < lg) */}
         <div className="flex lg:hidden items-center gap-2">
-          <button
-            type="button"
-            onClick={() => openDonationModal()}
-            className="bg-[#168039] text-white rounded-full px-3 py-1.5 text-xs font-medium flex items-center gap-1 cursor-pointer"
-          >
-            <Heart className="w-3 h-3 fill-white text-white" />
-            <span>Donate</span>
-          </button>
+          <DonateButton size="sm" label="Donate" />
           <Sheet open={isMenuOpen} onOpenChange={setMenuOpen}>
             <SheetTrigger asChild>
               <Button
@@ -386,16 +388,30 @@ export function Header() {
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] bg-white text-slate-800 border-l border-slate-200 z-[80] overflow-y-auto">
               <SheetHeader className="text-left border-b border-slate-100 pb-4">
-                <SheetTitle className="text-[#0f5b9e] font-bold text-base flex items-center">
-                  <div className="relative h-13 w-auto flex items-center shrink-0">
-                    <Image
-                      src={logo || '/ref/logo.png'}
-                      alt="ITLC Foundation Logo"
-                      width={160}
-                      height={56}
-                      className="h-12 w-auto object-contain"
-                    />
-                  </div>
+                <SheetTitle className="text-[#0f5b9e] font-bold text-base">
+                  <Link
+                    href="/"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex items-center gap-2.5 group cursor-pointer"
+                  >
+                    <div className="relative h-11 w-11 flex items-center justify-center shrink-0">
+                      <Image
+                        src={brandInfo.logo || '/ref/logo.png'}
+                        alt="ITLC Foundation Emblem"
+                        width={48}
+                        height={48}
+                        className="h-full w-full object-contain"
+                      />
+                    </div>
+                    <div className="flex flex-col justify-center text-left leading-tight">
+                      <span className="font-extrabold text-sm sm:text-base font-headline tracking-tight text-[#168039] uppercase leading-none">
+                        {brandInfo.name || 'ITLC FOUNDATION'}
+                      </span>
+                      <span className="text-[10px] font-medium text-slate-500 tracking-tight mt-0.5">
+                        Empowering Communities
+                      </span>
+                    </div>
+                  </Link>
                 </SheetTitle>
               </SheetHeader>
 
@@ -526,17 +542,14 @@ export function Header() {
                   Contact
                 </Link>
 
-                <button
-                  type="button"
+                <DonateButton
+                  size="lg"
+                  className="w-full mt-4"
                   onClick={() => {
                     setMenuOpen(false);
                     openDonationModal();
                   }}
-                  className="mt-4 bg-[#168039] text-white rounded-full py-2.5 px-4 text-center font-semibold text-sm flex items-center justify-center gap-2 shadow-sm cursor-pointer w-full"
-                >
-                  <Heart className="w-4 h-4 fill-white text-white" />
-                  <span>Donate Now</span>
-                </button>
+                />
               </div>
             </SheetContent>
           </Sheet>

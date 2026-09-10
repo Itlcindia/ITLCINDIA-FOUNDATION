@@ -72,7 +72,7 @@ export default function GalleryPage() {
           </>
         }
         subtitle="Hamari activities ki real photos aur video highlights jisme aap dekh sakte hain kaise aapka support ground level par real change la raha hai."
-        imageUrl="/pro/ab.png"
+        imageUrl="/causes/gallery_hero.jpg"
         imageHint="community social impact gallery"
       />
 

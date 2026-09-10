@@ -1,4 +1,5 @@
 'use client';
+import { DonateButton } from '@/components/ui/donate-button';
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
@@ -238,15 +239,11 @@ export default function Home() {
               {/* CTA Action Buttons */}
               <div className="flex flex-wrap items-center gap-4">
                 {/* Primary Button: Donate Now */}
-                <button
-                  type="button"
-                  onClick={() => openDonationModal()}
-                  className="bg-[#168039] hover:bg-[#137233] text-white rounded-full px-7 py-3.5 text-sm sm:text-base font-semibold flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer"
-                >
-                  <Heart className="w-4 h-4 fill-white text-white" />
-                  <span>{hero.primaryBtnText || 'Donate Now'}</span>
-                  <ArrowRight className="w-4 h-4 ml-0.5" />
-                </button>
+                <DonateButton
+                  size="lg"
+                  showArrow
+                  label={hero.primaryBtnText || 'Donate Now'}
+                />
 
                 {/* Secondary Button: Learn More */}
                 <Link
@@ -465,39 +462,40 @@ export default function Home() {
       </section>
 
       {/* ========================================================================= */}
-      {/* SECTION 3: KEY PROJECTS IN LUCKNOW (EDITORIAL MINIMALIST DESIGN)          */}
+      {/* SECTION 3: KEY PROJECTS IN LUCKNOW (HARMONIZED BLUE & GREEN THEME)        */}
       {/* ========================================================================= */}
-      <section id="projects" className="w-full bg-white py-14 md:py-20 scroll-mt-20 border-b border-gray-100">
+      <section id="projects" className="w-full bg-[#dff0e6] bg-gradient-to-r from-[#daf0e3] via-[#e2f2e7] to-[#d8ece0] py-14 md:py-20 scroll-mt-20 border-b border-[#c8e2d3]">
         <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Section Header Matching Reference Image */}
+          {/* Section Header Matching Home Page Colors */}
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-12 gap-4">
             <div>
-              <p className="text-xs sm:text-sm font-normal text-gray-500 mb-2 font-headline">
-                Our projects
-              </p>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 tracking-tight leading-tight font-headline">
-                Our Key Projects in Lucknow
+              <span className="text-[#168039] font-bold text-xs md:text-sm tracking-widest uppercase block font-headline mb-1.5">
+                OUR PROJECTS —
+              </span>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight font-headline">
+                <span className="text-[#0f5b9e]">Our Key Projects in </span>
+                <span className="text-[#168039]">Lucknow</span>
               </h2>
             </div>
             <div>
               <Link
                 href="/projects"
-                className="inline-flex items-center gap-2 bg-black hover:bg-neutral-800 text-white text-xs sm:text-sm font-medium px-4 py-2 sm:px-5 sm:py-2.5 rounded-[4px] transition-colors shrink-0 shadow-sm"
+                className="inline-flex items-center gap-2 bg-[#168039] hover:bg-[#126b2f] text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-full transition-all shrink-0 shadow-sm group cursor-pointer"
               >
                 <span>View all</span>
-                <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                <ArrowUpRight className="w-4 h-4 text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </Link>
             </div>
           </div>
 
-          {/* Project Cards Grid Matching Reference Image Exactly */}
+          {/* Project Cards Grid Matching Brand Colors */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             {(projects || []).map((project: any, pIdx: number) => {
               return (
                 <Link
                   key={project.id || pIdx}
                   href={project.link || '/projects'}
-                  className="group relative h-[380px] sm:h-[440px] lg:h-[480px] w-full rounded-2xl sm:rounded-[20px] overflow-hidden bg-gray-100 block shadow-sm hover:shadow-xl transition-all duration-500 border border-black/5"
+                  className="group relative h-[380px] sm:h-[440px] lg:h-[480px] w-full rounded-2xl sm:rounded-[20px] overflow-hidden bg-white block shadow-sm hover:shadow-xl transition-all duration-500 border border-[#c8e2d3] hover:border-[#168039]/50"
                 >
                   {/* Full Card Cover Image */}
                   <Image
@@ -508,18 +506,27 @@ export default function Home() {
                     className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                   />
 
-                  {/* Floating White Overlay Card at Bottom */}
-                  <div className="absolute inset-x-3 bottom-3 sm:inset-x-4 sm:bottom-4 bg-white rounded-xl sm:rounded-2xl p-3.5 sm:p-4 md:p-5 shadow-lg flex items-center justify-between gap-3 border border-black/5">
+                  {/* Category Badge on top-left of image */}
+                  {project.badge && (
+                    <div className="absolute top-3.5 left-3.5 sm:top-4 sm:left-4 z-10">
+                      <span className="bg-[#0f5b9e]/90 backdrop-blur-xs text-white text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                        {project.badge}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Floating White Overlay Card at Bottom with Blue & Green Accents */}
+                  <div className="absolute inset-x-3 bottom-3 sm:inset-x-4 sm:bottom-4 bg-white/95 backdrop-blur-md rounded-xl sm:rounded-2xl p-3.5 sm:p-4 md:p-5 shadow-lg flex items-center justify-between gap-3 border border-[#c8e2d3]">
                     <div className="min-w-0 flex-1">
-                      <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 truncate font-headline group-hover:text-black">
+                      <h3 className="text-sm sm:text-base md:text-lg font-bold text-[#0f5b9e] group-hover:text-[#168039] transition-colors truncate font-headline">
                         {project.title}
                       </h3>
-                      <p className="text-xs sm:text-sm text-gray-500 truncate mt-0.5">
+                      <p className="text-xs sm:text-sm text-gray-600 truncate mt-0.5">
                         {project.description}
                       </p>
                     </div>
-                    <div className="w-8 h-8 sm:w-9 sm:h-9 bg-black group-hover:bg-[#168039] text-white flex items-center justify-center rounded-[4px] shrink-0 transition-colors duration-200 shadow-sm">
-                      <ArrowUpRight className="w-4 h-4 text-white" />
+                    <div className="w-8 h-8 sm:w-9 sm:h-9 bg-[#168039] group-hover:bg-[#0f5b9e] text-white flex items-center justify-center rounded-full shrink-0 transition-all duration-300 shadow-sm">
+                      <ArrowUpRight className="w-4 h-4 text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                     </div>
                   </div>
                 </Link>
@@ -622,15 +629,11 @@ export default function Home() {
               </p>
 
               <div>
-                <button
-                  type="button"
-                  onClick={() => openDonationModal()}
-                  className="inline-flex bg-[#168039] hover:bg-[#137233] text-white rounded-full px-8 py-3.5 text-sm sm:text-base font-semibold items-center gap-2 shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer"
-                >
-                  <Heart className="w-4 h-4 fill-white text-white" />
-                  <span>{cta.btnText || 'Donate Now'}</span>
-                  <ArrowRight className="w-4 h-4 ml-0.5" />
-                </button>
+                <DonateButton
+                  size="lg"
+                  showArrow
+                  label={cta.btnText || 'Donate Now'}
+                />
               </div>
             </div>
 

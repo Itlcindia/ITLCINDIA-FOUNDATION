@@ -1,4 +1,5 @@
 'use client';
+import { DonateButton } from '@/components/ui/donate-button';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -68,7 +69,7 @@ export default function AnimalWelfarePage() {
       <PageHero
         title="Animal Welfare NGO in Lucknow"
         subtitle="Join our mission to rescue, protect, and provide a better life for animals in need across Uttar Pradesh."
-        imageUrl="/pro/ab.png"
+        imageUrl="/causes/animal_welfare_hero.jpg"
         imageHint="rescue dog hand"
       />
 

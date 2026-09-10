@@ -1,4 +1,5 @@
 'use client';
+import { DonateButton } from '@/components/ui/donate-button';
 
 import React from 'react';
 import { PageHero } from '@/components/layout/page-hero';
@@ -183,14 +184,11 @@ export default function EducationSupportPage() {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <button
-              type="button"
-              onClick={() => openDonationModal(1000)}
-              className="px-8 py-3.5 rounded-full bg-[#168039] hover:bg-[#137233] text-white font-bold text-sm shadow-md hover:shadow-lg transition-all cursor-pointer inline-flex items-center gap-2"
-            >
-              <Heart className="w-4 h-4 fill-white" />
-              <span>Sponsor a Student Kit (₹1,000 - 80G Exempt)</span>
-            </button>
+            <DonateButton
+              size="lg"
+              amount={1000}
+              label="Sponsor a Student Kit (₹1,000 - 80G Exempt)"
+            />
             <Link
               href="/volunteer"
               className="px-8 py-3.5 rounded-full border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold text-sm transition-all"

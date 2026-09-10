@@ -137,14 +137,14 @@ export const initialCmsData: any = {
           "id": "sub-1",
           "title": "Compassion in Action: Stray Animal Welfare, Rescue, and Emergency Medical Care Across Lucknow",
           "category": "Animal Welfare",
-          "image": "/pro/ani.png",
+          "image": "/causes/animal_welfare_hero.jpg",
           "link": "/blog/animal-welfare-stray-rescue-feeding-care-uttar-pradesh"
         },
         {
           "id": "sub-2",
           "title": "Empowering Women in Rural Uttar Pradesh: Vocational Training, Self-Help Groups, and Economic Independence",
           "category": "Women Empowerment",
-          "image": "/pro/ser.png",
+          "image": "/causes/women_empowerment_hero.jpg",
           "link": "/blog/women-empowerment-skill-development-rural-uttar-pradesh"
         },
         {
@@ -158,7 +158,7 @@ export const initialCmsData: any = {
           "id": "sub-4",
           "title": "Clean Water & Sanitation: Ensuring Safe Drinking Water and Hygiene Awareness in Semi-Urban Communities",
           "category": "Clean Water & Sanitation",
-          "image": "/ref/project_water_hd.jpg",
+          "image": "/causes/clean_water_hero.jpg",
           "link": "/blog/clean-water-sanitation-hygiene-communities-uttar-pradesh"
         }
       ]
@@ -244,25 +244,25 @@ export const initialCmsData: any = {
   "gallery": [
     {
       "id": "gal-women-1",
-      "image": "/pro/ser.png",
+      "image": "/causes/women_empowerment_hero.jpg",
       "title": "Women Vocational Tailoring & Sewing Skill Center in UP",
       "category": "Women Empowerment"
     },
     {
       "id": "gal-women-2",
-      "image": "/ref/story_1_hd.jpg",
+      "image": "/causes/women_shg_workshop.jpg",
       "title": "Self-Help Group (SHG) Livelihood & Digital Banking Workshop",
       "category": "Women Empowerment"
     },
     {
       "id": "gal-water-1",
-      "image": "/ref/project_water_hd.jpg",
+      "image": "/causes/clean_water_hero.jpg",
       "title": "Safe Drinking Water Filtration & Storage Distribution in Rural UP",
       "category": "Clean Water & Sanitation"
     },
     {
       "id": "gal-water-2",
-      "image": "/ref/story_3_hd.jpg",
+      "image": "/causes/clean_water_hygiene.jpg",
       "title": "Community Water Testing & WASH Hygiene Education Drive",
       "category": "Clean Water & Sanitation"
     },
@@ -280,7 +280,7 @@ export const initialCmsData: any = {
     },
     {
       "id": "gal-soc-1",
-      "image": "/ref/project_community_hd.jpg",
+      "image": "/causes/social_welfare_hero.jpg",
       "title": "Community Welfare & Free Ration Relief Drive across Lucknow",
       "category": "Social Welfare"
     },
@@ -292,7 +292,7 @@ export const initialCmsData: any = {
     },
     {
       "id": "gal-plan-1",
-      "image": "/pro/tree.png",
+      "image": "/causes/environment_hero.jpg",
       "title": "Massive Native Tree Plantation Campaign (Neem, Peepal, Banyan)",
       "category": "Plantation"
     },
@@ -310,13 +310,13 @@ export const initialCmsData: any = {
     },
     {
       "id": "gal-ani-1",
-      "image": "/pro/ani.png",
+      "image": "/causes/animal_welfare_hero.jpg",
       "title": "Street Dog Daily Feeding & Reflective Safety Collars Campaign",
       "category": "Animal Care"
     },
     {
       "id": "gal-ani-2",
-      "image": "/gal/a.png",
+      "image": "/causes/animal_rescue_treatment.jpg",
       "title": "Emergency Veterinary Medical Aid & Wound Treatment Camp",
       "category": "Animal Care"
     },
@@ -334,7 +334,7 @@ export const initialCmsData: any = {
     },
     {
       "id": "gal-evt-3",
-      "image": "/pro/ab.png",
+      "image": "/causes/gallery_hero.jpg",
       "title": "NGO Registration, 80G Transparency & Stakeholder Summit",
       "category": "Events"
     }
@@ -343,25 +343,25 @@ export const initialCmsData: any = {
     "animalWelfare": {
       "title": "Dedicated Animal Welfare & Care NGO in Lucknow",
       "subtitle": "Protecting, feeding, and providing medical aid to stray animals and birds across Lucknow.",
-      "image": "/pro/ab.png",
+      "image": "/causes/animal_welfare_hero.jpg",
       "description": "Our team provides 24/7 rescue, vaccination, sterilisation, and feeding drives for stray animals in Uttar Pradesh."
     },
     "environment": {
       "title": "Leading Environmental NGO in Lucknow",
       "subtitle": "Protecting Nature, Planting Trees, and Creating Climate Awareness Across Uttar Pradesh.",
-      "image": "/pro/t.png",
+      "image": "/causes/environment_hero.jpg",
       "description": "Combating deforestation through seed ball distribution, afforestation, and water conservation drives."
     },
     "socialWelfare": {
       "title": "A Leading Social Welfare NGO in Lucknow",
       "subtitle": "Supporting health, education, women empowerment, and the elderly through our dedicated welfare programs.",
-      "image": "/pro/ab.png",
+      "image": "/causes/social_welfare_hero.jpg",
       "description": "Direct grassroots assistance, ration distributions, health camps, and vocational skill workshops."
     },
     "womenEmpowerment": {
       "title": "Women Empowerment & Vocational Training",
       "subtitle": "Promoting economic self-reliance, sewing skills, and financial literacy among rural women in UP.",
-      "image": "/pro/ser.png",
+      "image": "/causes/women_empowerment_hero.jpg",
       "description": "Empowering underprivileged women across Lucknow with sewing skill centers, SHG formation, and digital banking training."
     },
     "education": {
@@ -373,7 +373,7 @@ export const initialCmsData: any = {
     "cleanWater": {
       "title": "Clean Water & Sanitation Campaign",
       "subtitle": "Ensuring safe drinking water access, covered food-grade storage, and WASH hygiene workshops.",
-      "image": "/ref/project_water_hd.jpg",
+      "image": "/causes/clean_water_hero.jpg",
       "description": "Combating waterborne diseases through testing, tap-fitted water containers, and community bio-sand filters."
     }
   },
@@ -393,7 +393,7 @@ export const initialCmsData: any = {
     "qrTitle": "Scan to Support Our NGO",
     "qrDescription": "Quickly donate to our Lucknow projects via any UPI App",
     "qrImage": "/qr.png",
-    "upiId": "itlc@upi",
+    "upiId": "itlcpa@upi",
     "faqs": [
       {
         "id": "faq-1",
@@ -432,7 +432,7 @@ export const initialCmsData: any = {
     "qrImage": "/qr.png",
     "qrTitle": "Official UPI Barcode Payment",
     "qrDescription": "Scan using Google Pay, PhonePe, Paytm, or BHIM. Or click below to proceed with Gateway / Cards / UPI.",
-    "upiId": "itlcpa@upi",
+    "upiId": "itlcpankajk@upi",
     "presetAmounts": [
       500,
       1000,
@@ -521,7 +521,7 @@ export const initialCmsData: any = {
   "site": {
     "name": "ITLC Foundation",
     "tagline": "Empowering Communities Through Learning & Care.",
-    "logo": "/uploads/1788860094660-itlc_foundation.png",
+    "logo": "/ref/logo.png",
     "favicon": "/favicon.ico",
     "phone": "+91 94150 00000",
     "email": "info@itlcfoundation.com",

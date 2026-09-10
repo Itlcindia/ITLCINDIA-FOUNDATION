@@ -1,4 +1,5 @@
 'use client';
+import { DonateButton } from '@/components/ui/donate-button';
 
 import Image from 'next/image';
 import { PageHero } from '@/components/layout/page-hero';
@@ -118,7 +119,7 @@ export default function SocialWelfarePage() {
       {/* 1. Hero Section */}
       <section className="relative h-[70vh] min-h-[500px] w-full flex items-center justify-center">
         <Image
-          src="/pro/ab.png"
+          src="/causes/social_welfare_hero.jpg"
           alt="Empowering Communities in Lucknow for a Better Tomorrow"
           fill
           className="object-cover"
@@ -133,9 +134,7 @@ export default function SocialWelfarePage() {
             Supporting health, education, women empowerment, and the elderly through our dedicated welfare programs in Uttar Pradesh.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Button size="lg" className="rounded-full cursor-pointer" onClick={() => openDonationModal()}>
-              Donate for Social Welfare <Heart className="ml-2 size-5" />
-            </Button>
+            <DonateButton size="lg" label="Donate for Social Welfare" />
             <Button asChild size="lg" variant="outline" className="rounded-full bg-transparent text-white hover:bg-white hover:text-primary border-white hover:border-white">
                 <Link href="/contact">
                     Join Our Welfare Campaign <Users2 className="ml-2 size-5" />
@@ -233,7 +232,7 @@ export default function SocialWelfarePage() {
           variants={sectionVariants}
         >
           <Image
-            src="https://picsum.photos/seed/awareness-bg/1920/1080"
+            src="/causes/gallery_hero.jpg"
             alt="Community meeting for women empowerment in Uttar Pradesh"
             fill
             className="object-cover"
