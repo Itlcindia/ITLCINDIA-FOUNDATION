@@ -307,8 +307,23 @@ export default function BlogPostDetailPage({ params }: { params: Promise<{ slug:
     notFound();
   }
 
-  const images = post.images && post.images.length > 0 ? post.images : [post.image || '/pro/ab.png'];
-  const secondaryImage = post.contentImage || (images.length > 1 && images[1] !== images[0] ? images[1] : null);
+  const primaryFallbackImage =
+    post.image ||
+    (post as any)?.imageUrl ||
+    (post as any)?.image_url ||
+    (post as any)?.featured_image ||
+    '/causes/women_empowerment_hero.jpg';
+
+  const validImages = Array.isArray(post.images)
+    ? post.images.filter((img: any) => typeof img === 'string' && img.trim().length > 0)
+    : [];
+
+  const images = validImages.length > 0 ? validImages : [primaryFallbackImage];
+
+  const secondaryImage =
+    (post.contentImage && post.contentImage.trim().length > 0 ? post.contentImage.trim() : null) ||
+    (post as any)?.content_image_url ||
+    (images.length > 1 && images[1] !== images[0] ? images[1] : null);
   const allOtherPosts = getAllBlogs().filter((p: BlogPost) => p.slug !== post.slug);
   const relatedPosts: BlogPost[] = allOtherPosts;
   const bottomFourPosts: BlogPost[] = allOtherPosts.slice(0, 4);
@@ -468,9 +483,9 @@ export default function BlogPostDetailPage({ params }: { params: Promise<{ slug:
           {/* Displayed prominently at the very top of the article     */}
           {/* ======================================================== */}
           <div className="space-y-3">
-            <div className="relative aspect-video sm:aspect-16/9 w-full rounded-2xl overflow-hidden shadow-md bg-slate-100 border border-slate-200">
+            <div className="relative aspect-video sm:aspect-[16/9] w-full rounded-2xl overflow-hidden shadow-md bg-slate-100 border border-slate-200">
               <Image
-                src={images[activeImgIdx] || post.image || '/pro/ab.png'}
+                src={images[activeImgIdx] || images[0] || primaryFallbackImage}
                 alt={post.title}
                 fill
                 priority
@@ -564,7 +579,7 @@ export default function BlogPostDetailPage({ params }: { params: Promise<{ slug:
           {/* ======================================================== */}
           {secondaryImage && (
             <div className="space-y-2 pt-2">
-              <div className="relative aspect-video sm:aspect-21/9 w-full rounded-2xl overflow-hidden shadow-md bg-slate-100 border border-slate-200">
+              <div className="relative aspect-video sm:aspect-[21/9] w-full rounded-2xl overflow-hidden shadow-md bg-slate-100 border border-slate-200">
                 <Image
                   src={secondaryImage}
                   alt={`${post.title} - In-Article Photo`}
