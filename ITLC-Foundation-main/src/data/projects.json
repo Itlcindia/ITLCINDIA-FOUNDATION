@@ -14,7 +14,7 @@
     "city": "Lucknow",
     "state": "Uttar Pradesh",
     "country": "India",
-    "featured_image": "/pro/tree.png",
+    "featured_image": "/causes/environment_hero.jpg",
     "image_alt": "Massive community tree plantation drive in Lucknow by ITLC Foundation volunteers",
     "objectives": [
       "Plant and nurture 50,000+ native saplings across Lucknow and surrounding districts.",
@@ -50,28 +50,16 @@
     ],
     "gallery": [
       {
-        "image": "/pro/tree.png",
-        "caption": "Volunteers planting native Peepal saplings along the Gomti Nagar green corridor",
-        "alt": "Plantation drive Peepal saplings",
+        "image": "/causes/environment_hero.jpg",
+        "caption": "Native Tree Plantation Drive in Lucknow",
+        "alt": "Tree Plantation",
         "order": 1
       },
       {
-        "image": "/ref/project_water_hd.jpg",
-        "caption": "Community sapling distribution drive in suburban Lucknow",
-        "alt": "Sapling distribution",
+        "image": "/ref/story_3_hd.jpg",
+        "caption": "Community Sapling Distribution Drive",
+        "alt": "Sapling Distribution",
         "order": 2
-      },
-      {
-        "image": "/ref/project_community_hd.jpg",
-        "caption": "School students taking the Adopt-a-Tree environmental pledge",
-        "alt": "Students planting trees",
-        "order": 3
-      },
-      {
-        "image": "/pro/ab.png",
-        "caption": "Installing durable protective tree guards and organic compost layers",
-        "alt": "Tree guard setup",
-        "order": 4
       }
     ],
     "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
@@ -112,7 +100,7 @@
     "city": "Lucknow",
     "state": "Uttar Pradesh",
     "country": "India",
-    "featured_image": "/pro/ani.png",
+    "featured_image": "/causes/animal_welfare_hero.jpg",
     "image_alt": "ITLC Foundation volunteer treating an injured stray dog in Lucknow",
     "objectives": [
       "Provide immediate emergency on-site medical first aid for 1,200+ injured stray animals annually.",
@@ -148,28 +136,22 @@
     ],
     "gallery": [
       {
-        "image": "/pro/ani.png",
-        "caption": "Volunteer administering antiseptic first aid to an injured street puppy",
-        "alt": "Stray dog treatment",
+        "image": "/causes/animal_welfare_hero.jpg",
+        "caption": "Stray Animal Medical Rescue & Care",
+        "alt": "Animal Rescue",
         "order": 1
       },
       {
-        "image": "/ref/project_water_hd.jpg",
-        "caption": "Fitting reflective night-glow safety collars on street cattle before winter fog",
-        "alt": "Reflective safety collar",
+        "image": "/causes/animal_feeding_drive.jpg",
+        "caption": "Daily Stray Animal Community Feeding Drive",
+        "alt": "Animal Feeding Drive",
         "order": 2
       },
       {
-        "image": "/pro/ser.png",
-        "caption": "Daily evening nutritious feeding drive for street dogs across suburban Lucknow",
-        "alt": "Animal feeding drive",
+        "image": "/causes/animal_rescue_treatment.jpg",
+        "caption": "On-site Veterinary First Aid Treatment",
+        "alt": "Veterinary Treatment",
         "order": 3
-      },
-      {
-        "image": "/ref/hero_boy_hd.jpg",
-        "caption": "Rescued dog fully rehabilitated and placed with a loving foster family",
-        "alt": "Rehabilitated animal",
-        "order": 4
       }
     ],
     "video_url": "",
@@ -210,7 +192,7 @@
     "city": "Lucknow",
     "state": "Uttar Pradesh",
     "country": "India",
-    "featured_image": "/pro/ser.png",
+    "featured_image": "/causes/women_empowerment_hero.jpg",
     "image_alt": "Rural women learning professional tailoring at ITLC Foundation vocational training center",
     "objectives": [
       "Train 1,000+ marginalized women annually in certified tailoring and vocational trades.",
@@ -246,28 +228,16 @@
     ],
     "gallery": [
       {
-        "image": "/pro/ser.png",
-        "caption": "Trainees mastering modern sewing machines and precision garment stitching",
-        "alt": "Tailoring class",
+        "image": "/causes/women_empowerment_hero.jpg",
+        "caption": "Women Vocational Skill Workshop",
+        "alt": "Women Vocational Training",
         "order": 1
       },
       {
-        "image": "/ref/project_education_hd.jpg",
-        "caption": "Computer literacy batch learning basic spreadsheet and digital communication tools",
-        "alt": "Computer training",
+        "image": "/causes/women_shg_workshop.jpg",
+        "caption": "Self-Help Group (SHG) Sewing & Handicraft Center",
+        "alt": "SHG Workshop",
         "order": 2
-      },
-      {
-        "image": "/ref/project_community_hd.jpg",
-        "caption": "Women displaying their handcrafted bags and festive textiles at a local fair",
-        "alt": "Handicrafts showcase",
-        "order": 3
-      },
-      {
-        "image": "/pro/ab.png",
-        "caption": "Distributing free starter toolkits and sewing certificates to course graduates",
-        "alt": "Certificate distribution",
-        "order": 4
       }
     ],
     "video_url": "",
@@ -406,7 +376,7 @@
     "city": "Sitapur",
     "state": "Uttar Pradesh",
     "country": "India",
-    "featured_image": "/ref/project_water_hd.jpg",
+    "featured_image": "/causes/clean_water_hero.jpg",
     "image_alt": "Rural village children drinking fresh clean water from newly rehabilitated community water tap",
     "objectives": [
       "Rehabilitate 100+ defunct community hand pumps across water-stressed villages in central UP.",
@@ -442,28 +412,16 @@
     ],
     "gallery": [
       {
-        "image": "/ref/project_water_hd.jpg",
-        "caption": "School children enjoying clean, safe drinking water from a newly installed filtration station",
-        "alt": "Clean water drinking station",
+        "image": "/causes/clean_water_hero.jpg",
+        "caption": "Clean Drinking Water Filtration & Pump Installation",
+        "alt": "Clean Water Project",
         "order": 1
       },
       {
-        "image": "/ref/project_community_hd.jpg",
-        "caption": "Our field technicians repairing deep borewell hand pump mechanisms in Sitapur",
-        "alt": "Hand pump repair",
+        "image": "/causes/clean_water_hygiene.jpg",
+        "caption": "Community WASH Sanitation & Hygiene Training",
+        "alt": "Sanitation Awareness",
         "order": 2
-      },
-      {
-        "image": "/pro/tree.png",
-        "caption": "WASH hygiene workshop teaching students correct hand-washing techniques",
-        "alt": "WASH workshop",
-        "order": 3
-      },
-      {
-        "image": "/pro/ab.png",
-        "caption": "Testing local ground water for dissolved solids (TDS) and bacterial contamination",
-        "alt": "Water quality test",
-        "order": 4
       }
     ],
     "video_url": "",
@@ -504,7 +462,7 @@
     "city": "Lucknow",
     "state": "Uttar Pradesh",
     "country": "India",
-    "featured_image": "/ref/project_community_hd.jpg",
+    "featured_image": "/causes/social_welfare_hero.jpg",
     "image_alt": "ITLC Foundation volunteers distributing dry ration kits and winter relief to needy families in Lucknow",
     "objectives": [
       "Distribute 5,000+ emergency dry ration kits to destitute families annually.",
@@ -540,28 +498,16 @@
     ],
     "gallery": [
       {
-        "image": "/ref/project_community_hd.jpg",
-        "caption": "Distributing comprehensive dry ration kits to daily-wage families in Lucknow",
-        "alt": "Ration distribution",
+        "image": "/causes/social_welfare_hero.jpg",
+        "caption": "Underprivileged Family Ration & Blanket Relief Drive",
+        "alt": "Social Welfare Relief",
         "order": 1
       },
       {
-        "image": "/ref/hero_boy_hd.jpg",
-        "caption": "Nighttime winter blanket distribution drive reaching homeless individuals on city pavements",
-        "alt": "Winter blanket distribution",
+        "image": "/ref/story_4_hd.jpg",
+        "caption": "Grassroots Community Health Checkup Camp",
+        "alt": "Community Camp",
         "order": 2
-      },
-      {
-        "image": "/pro/ser.png",
-        "caption": "Free community health screening camp providing consultations and free generic medicines",
-        "alt": "Health camp",
-        "order": 3
-      },
-      {
-        "image": "/pro/ab.png",
-        "caption": "Volunteers distributing walking canes and spectacles to senior citizens",
-        "alt": "Elder support",
-        "order": 4
       }
     ],
     "video_url": "",

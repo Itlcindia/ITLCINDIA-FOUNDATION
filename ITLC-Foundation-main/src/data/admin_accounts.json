@@ -8,8 +8,8 @@
     "last_login_at": "2026-09-09 08:43:17",
     "last_login_ip": "::1",
     "created_at": "2026-01-01 10:00:00",
-    "password": "admin123",
-    "updated_at": "2026-09-08 11:41:22"
+    "password_hash": "scrypt:274d4c552852ec2bdb4cd45dbbd9f946:e4b5d1e7d8f943228499dcce0709a783ebdf7e31c01340da7654fedf787a6db15285c534655639bf750b301e2234679fa0ecbe7eead1d3b367ecc24c1cb9344e",
+    "updated_at": "2026-09-12 11:00:00"
   },
   {
     "id": "admin-2",
@@ -20,7 +20,8 @@
     "last_login_at": "2026-09-07 18:20:00",
     "last_login_ip": "192.168.1.15",
     "created_at": "2026-03-15 11:30:00",
-    "password": "editor123"
+    "password_hash": "scrypt:10f07dbaa6d8d7afcf2ce1d7ce3d3ded:1010f9fcd8d4dc0c3d4a8342f38f0f06e82b904efd3454844f883be7d60a0b5314e76ea865b58b2f1c7a17a1bcdcf4882a5dc33cc751197d749225f14978ddea",
+    "updated_at": "2026-09-12 11:00:00"
   },
   {
     "id": "admin-3",
@@ -31,6 +32,7 @@
     "last_login_at": "2026-09-08 11:15:00",
     "last_login_ip": "192.168.1.22",
     "created_at": "2026-04-10 09:00:00",
-    "password": "finance123"
+    "password_hash": "scrypt:44ed1cc92ee54406c969735659b6892c:ea57b280bf09105b2e1c04c2555403e04d6d01a7968d4c370a20ce590c22296d071bae7cbe560c1e0e3925adf6e0568f54a60fb6f9df80380a8c039fc603e4c3",
+    "updated_at": "2026-09-12 11:00:00"
   }
 ]

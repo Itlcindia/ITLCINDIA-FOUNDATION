@@ -43,7 +43,7 @@ export const BLOG_POSTS: BlogPost[] = [
     author: 'ITLC Environmental Conservation Wing',
     date: 'September 5, 2026',
     readTime: '6 min read',
-    image: '/pro/tree.png',
+    image: '/causes/environment_hero.jpg',
     tags: ['Environment', 'Tree Plantation', 'Lucknow', 'Uttar Pradesh', 'Clean Air', 'Biodiversity'],
     keyPoints: [
       'Urban Lucknow has witnessed a 14% contraction of dense tree cover over the last two decades.',
@@ -102,8 +102,8 @@ Together, we can build a resilient, breathable, and verdant Uttar Pradesh for ge
     author: 'ITLC Animal Welfare & Rescue Unit',
     date: 'September 2, 2026',
     readTime: '7 min read',
-    image: '/pro/ani.png',
-    tags: ['Animal Welfare', 'Stray Dogs', 'Rescue', 'Lucknow', 'Humane Care', 'Veterinary Aid'],
+    image: '/causes/animal_welfare_hero.jpg',
+    tags: ['Animal Welfare', 'Stray Rescue', 'Lucknow', 'Dog Shelter', 'Uttar Pradesh', 'Feeding Drive'],
     keyPoints: [
       'Over 600 street animals fed nutritious meals daily across multiple zones in Lucknow.',
       'More than 1,200 reflective safety collars installed to prevent nocturnal road accidents.',
@@ -165,7 +165,7 @@ Cruelty, relocation, or culling is both illegal under the Prevention of Cruelty 
     author: 'ITLC Women Empowerment Cell',
     date: 'August 28, 2026',
     readTime: '6 min read',
-    image: '/pro/ser.png',
+    image: '/causes/women_empowerment_hero.jpg',
     tags: ['Women Empowerment', 'Skill Development', 'Rural UP', 'Financial Literacy', 'Livelihoods'],
     keyPoints: [
       'Over 450 rural and semi-urban women trained in commercial stitching, sewing, and handicrafts.',
@@ -292,7 +292,7 @@ Partner with ITLC Foundation today by sponsoring a child’s educational kit or 
     author: 'ITLC Public Health & Sanitation Team',
     date: 'August 14, 2026',
     readTime: '6 min read',
-    image: '/pro/ab.png',
+    image: '/causes/clean_water_hero.jpg',
     tags: ['Clean Water', 'Sanitation', 'Public Health', 'Uttar Pradesh', 'Hygiene Awareness'],
     keyPoints: [
       'Contaminated groundwater and lack of covered storage remain leading causes of diarrhea and typhoid in rural UP.',
@@ -345,7 +345,7 @@ ITLC Foundation remains dedicated to expanding our safe water storage distributi
     author: 'ITLC Social Welfare & Relief Directorate',
     date: 'August 08, 2026',
     readTime: '7 min read',
-    image: '/pro/tree.png',
+    image: '/causes/social_welfare_hero.jpg',
     tags: ['Social Welfare', 'Winter Relief', 'Food Security', 'Lucknow', 'Uttar Pradesh', 'Humanitarian Aid'],
     keyPoints: [
       'Over 4,000 thermal blankets and warm winter jackets distributed to homeless citizens and night shelters.',

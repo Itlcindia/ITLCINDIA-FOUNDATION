@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import nodemailer from 'nodemailer';
+import { verifyPassword, hashPassword, hashOtp, verifyOtp } from '@/lib/encryption';
 
 const accountsFile = path.resolve(process.cwd(), 'src/data/admin_accounts.json');
 const otpFile = path.resolve(process.cwd(), 'src/data/admin_otp.json');
@@ -44,7 +45,7 @@ function writeAccounts(accounts: any[]) {
   fs.writeFileSync(accountsFile, JSON.stringify(accounts, null, 2), 'utf8');
 }
 
-function readOtps(): Record<string, { otp: string; expiresAt: number; purpose: string }> {
+function readOtps(): Record<string, { otp?: string; otp_hash?: string; expiresAt: number; purpose: string }> {
   try {
     if (!fs.existsSync(otpFile)) return {};
     return JSON.parse(fs.readFileSync(otpFile, 'utf8'));
@@ -53,7 +54,7 @@ function readOtps(): Record<string, { otp: string; expiresAt: number; purpose: s
   }
 }
 
-function writeOtps(otps: Record<string, { otp: string; expiresAt: number; purpose: string }>) {
+function writeOtps(otps: Record<string, { otp?: string; otp_hash?: string; expiresAt: number; purpose: string }>) {
   fs.writeFileSync(otpFile, JSON.stringify(otps, null, 2), 'utf8');
 }
 
@@ -159,19 +160,24 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Email ID and password are required' }, { status: 400 });
       }
 
-      // Match by email OR username (admin fallback)
+      // Match by email OR username
       const user = accounts.find((a: any) => 
         a.email.toLowerCase() === cleanEmail || a.username.toLowerCase() === cleanEmail
       );
 
       const isValidUser = user && (
-        user.password === password || 
-        password === 'admin123' ||
-        (user.username === 'admin' && password.length >= 6)
+        (user.password_hash && verifyPassword(password, user.password_hash)) ||
+        (user.password && verifyPassword(password, user.password))
       );
 
       if (!isValidUser) {
         return NextResponse.json({ error: 'Invalid Email ID or Password. Please check and try again.' }, { status: 401 });
+      }
+
+      // Auto-migrate legacy plain text password to secure hash if needed
+      if (user.password && !user.password_hash) {
+        user.password_hash = hashPassword(password);
+        delete user.password;
       }
 
       if (!user.is_active) {
@@ -219,7 +225,7 @@ export async function POST(req: NextRequest) {
       const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
       const otps = readOtps();
       otps[cleanEmail] = {
-        otp: generatedOtp,
+        otp_hash: hashOtp(generatedOtp),
         expiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes
         purpose,
       };
@@ -251,7 +257,12 @@ export async function POST(req: NextRequest) {
       const otps = readOtps();
       const record = otps[cleanEmail];
 
-      if (!record || record.otp !== otp.trim()) {
+      const isOtpValid = record && (
+        (record.otp_hash && verifyOtp(otp, record.otp_hash)) ||
+        (record.otp && record.otp === otp.trim())
+      );
+
+      if (!isOtpValid) {
         return NextResponse.json({ error: 'Invalid or incorrect OTP. Please try again.' }, { status: 400 });
       }
 
@@ -306,7 +317,12 @@ export async function POST(req: NextRequest) {
       const otps = readOtps();
       const record = otps[cleanEmail];
 
-      if (!record || record.otp !== otp.trim()) {
+      const isOtpValid = record && (
+        (record.otp_hash && verifyOtp(otp, record.otp_hash)) ||
+        (record.otp && record.otp === otp.trim())
+      );
+
+      if (!isOtpValid) {
         return NextResponse.json({ error: 'Invalid or incorrect OTP entered.' }, { status: 400 });
       }
 
@@ -316,7 +332,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'OTP has expired. Please request a new code.' }, { status: 400 });
       }
 
-      // Find user and update password
+      // Find user and update password with irreversible cryptographic hash
       let user = accounts.find((a: any) => 
         a.email.toLowerCase() === cleanEmail || a.username.toLowerCase() === cleanEmail
       );
@@ -325,7 +341,8 @@ export async function POST(req: NextRequest) {
         user = accounts[0];
       }
 
-      user.password = newPassword;
+      user.password_hash = hashPassword(newPassword);
+      delete user.password;
       user.updated_at = new Date().toISOString().replace('T', ' ').substring(0, 19);
       writeAccounts(accounts);
 
@@ -354,13 +371,15 @@ export async function POST(req: NextRequest) {
 
       // If changing password, verify current password
       if (newPassword) {
-        if (currentPassword && targetUser.password && targetUser.password !== currentPassword && currentPassword !== 'admin123') {
+        const storedCred = targetUser.password_hash || targetUser.password;
+        if (currentPassword && storedCred && !verifyPassword(currentPassword, storedCred)) {
           return NextResponse.json({ error: 'Current password is incorrect.' }, { status: 400 });
         }
         if (newPassword.length < 6) {
           return NextResponse.json({ error: 'New password must be at least 6 characters.' }, { status: 400 });
         }
-        targetUser.password = newPassword;
+        targetUser.password_hash = hashPassword(newPassword);
+        delete targetUser.password;
       }
 
       if (newEmail && newEmail.includes('@')) {

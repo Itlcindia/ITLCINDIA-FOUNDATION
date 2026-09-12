@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { hashPassword } from '@/lib/encryption';
 
 const accountsFile = path.resolve(process.cwd(), 'src/data/admin_accounts.json');
 
@@ -19,7 +20,8 @@ function writeAccounts(accounts: any[]) {
 
 export async function GET() {
   const accounts = readAccounts();
-  return NextResponse.json({ success: true, accounts });
+  const sanitized = accounts.map(({ password, password_hash, ...rest }: any) => rest);
+  return NextResponse.json({ success: true, accounts: sanitized });
 }
 
 export async function POST(req: Request) {
@@ -36,12 +38,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Username already exists' }, { status: 400 });
     }
 
+    const initialPassword = body.password ? String(body.password) : 'admin123';
+
     const newAdmin = {
       id: 'admin-' + Date.now(),
       username: body.username.trim(),
       email: body.email.trim(),
       role: body.role,
       is_active: body.is_active !== undefined ? Boolean(body.is_active) : true,
+      password_hash: hashPassword(initialPassword),
       last_login_at: null,
       last_login_ip: null,
       created_at: new Date().toISOString().replace('T', ' ').substring(0, 19),
@@ -50,7 +55,8 @@ export async function POST(req: Request) {
     accounts.push(newAdmin);
     writeAccounts(accounts);
 
-    return NextResponse.json({ success: true, admin: newAdmin });
+    const { password_hash, ...safeAdmin } = newAdmin;
+    return NextResponse.json({ success: true, admin: safeAdmin });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
@@ -74,8 +80,14 @@ export async function PUT(req: Request) {
       updated_at: new Date().toISOString().replace('T', ' ').substring(0, 19),
     };
 
+    if (body.password) {
+      accounts[index].password_hash = hashPassword(body.password);
+      delete accounts[index].password;
+    }
+
     writeAccounts(accounts);
-    return NextResponse.json({ success: true, admin: accounts[index] });
+    const { password_hash, password, ...safeAdmin } = accounts[index];
+    return NextResponse.json({ success: true, admin: safeAdmin });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

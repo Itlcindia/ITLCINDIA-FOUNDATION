@@ -54,12 +54,10 @@
     "author": "ITLC Environmental Conservation Wing",
     "date": "September 5, 2026",
     "readTime": "6 min read",
-    "image": "/pro/tree.png",
+    "image": "/causes/environment_hero.jpg",
     "images": [
-      "/pro/tree.png",
-      "/gal/b.png",
-      "/ref/story_2_hd.jpg",
-      "/pro/1.png"
+      "/causes/environment_hero.jpg",
+      "/ref/story_3_hd.jpg"
     ],
     "tags": [
       "Environment",
@@ -86,12 +84,11 @@
     "author": "ITLC Animal Welfare & Rescue Unit",
     "date": "September 2, 2026",
     "readTime": "7 min read",
-    "image": "/pro/ani.png",
+    "image": "/causes/animal_welfare_hero.jpg",
     "images": [
-      "/pro/ani.png",
-      "/gal/a.png",
-      "/pro/ab.png",
-      "/ref/story_4_hd.jpg"
+      "/causes/animal_welfare_hero.jpg",
+      "/causes/animal_feeding_drive.jpg",
+      "/causes/animal_rescue_treatment.jpg"
     ],
     "tags": [
       "Animal Welfare",
@@ -118,12 +115,10 @@
     "author": "ITLC Women Empowerment Cell",
     "date": "August 28, 2026",
     "readTime": "6 min read",
-    "image": "/pro/ser.png",
+    "image": "/causes/women_empowerment_hero.jpg",
     "images": [
-      "/pro/ser.png",
-      "/ref/story_1_hd.jpg",
-      "/pro/ab.png",
-      "/gal/d.png"
+      "/causes/women_empowerment_hero.jpg",
+      "/causes/women_shg_workshop.jpg"
     ],
     "tags": [
       "Women Empowerment",
@@ -181,12 +176,10 @@
     "author": "ITLC Public Health & Sanitation Team",
     "date": "August 14, 2026",
     "readTime": "6 min read",
-    "image": "/pro/ab.png",
+    "image": "/causes/clean_water_hero.jpg",
     "images": [
-      "/pro/ab.png",
-      "/ref/project_water_hd.jpg",
-      "/ref/story_3_hd.jpg",
-      "/pro/3.png"
+      "/causes/clean_water_hero.jpg",
+      "/causes/clean_water_hygiene.jpg"
     ],
     "tags": [
       "Clean Water",
@@ -212,11 +205,9 @@
     "author": "ITLC Social Welfare & Relief Directorate",
     "date": "August 08, 2026",
     "readTime": "7 min read",
-    "image": "/pro/tree.png",
+    "image": "/causes/social_welfare_hero.jpg",
     "images": [
-      "/pro/tree.png",
-      "/ref/project_community_hd.jpg",
-      "/gal/e.png",
+      "/causes/social_welfare_hero.jpg",
       "/ref/story_4_hd.jpg"
     ],
     "tags": [
