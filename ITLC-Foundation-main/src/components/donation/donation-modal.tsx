@@ -16,7 +16,8 @@ import {
   Sparkles,
   CreditCard,
   AlertCircle,
-  RotateCcw
+  RotateCcw,
+  QrCode
 } from 'lucide-react';
 import { useDonationModal } from '@/context/donation-modal-context';
 import { downloadReceiptPdf, printReceiptInvoice } from '@/lib/donation-receipt';
@@ -88,6 +89,7 @@ export function DonationModal() {
   const [email, setEmail] = useState<string>('');
 
   // UI / Action states
+  const [showModalQr, setShowModalQr] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
@@ -657,6 +659,59 @@ export function DonationModal() {
                 {modalConfig?.taxExemptionNote || '50% Tax Exemption under Section 80G. Slip will download automatically.'}
               </span>
             </div>
+
+            {/* Optional UPI QR Barcode Display (Only if active in Admin CMS) */}
+            {modalConfig?.qrImage ? (
+              <div className="border border-emerald-200/80 bg-emerald-50/50 rounded-2xl p-3 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <QrCode className="w-4 h-4 text-[#168039]" />
+                    <span className="text-xs font-bold text-gray-800">
+                      {modalConfig?.qrTitle || 'Scan UPI QR Barcode'}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowModalQr(!showModalQr)}
+                    className="text-[11px] font-bold text-[#168039] hover:underline cursor-pointer bg-white px-2.5 py-1 rounded-lg border border-emerald-200 shadow-2xs"
+                  >
+                    {showModalQr ? 'Hide Barcode' : 'Show QR Barcode'}
+                  </button>
+                </div>
+
+                {showModalQr && (
+                  <div className="pt-2 border-t border-emerald-200/60 flex flex-col items-center text-center space-y-2">
+                    <div className="relative w-40 h-40 bg-white p-2 rounded-xl border border-emerald-200 shadow-sm">
+                      <Image
+                        src={modalConfig.qrImage}
+                        alt="UPI QR Code"
+                        fill
+                        className="object-contain p-1"
+                      />
+                    </div>
+                    {modalConfig.upiId && (
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-mono font-bold text-gray-700 bg-white px-2.5 py-1 rounded-lg border border-gray-200">
+                          {modalConfig.upiId}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            navigator.clipboard.writeText(modalConfig.upiId);
+                          }}
+                          className="text-[11px] font-bold text-[#168039] hover:text-[#137233] bg-white px-2 py-1 rounded-lg border border-emerald-300 shadow-2xs cursor-pointer"
+                        >
+                          Copy
+                        </button>
+                      </div>
+                    )}
+                    <p className="text-[10px] text-gray-500 max-w-xs">
+                      {modalConfig?.qrDescription || 'Scan with GPay, PhonePe, Paytm or BHIM'}
+                    </p>
+                  </div>
+                )}
+              </div>
+            ) : null}
 
             {/* 6. Proceed to Pay Button */}
             <div className="space-y-1.5 pt-1">

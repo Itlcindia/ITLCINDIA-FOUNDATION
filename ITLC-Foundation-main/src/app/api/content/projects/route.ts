@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import fs from 'fs';
 import path from 'path';
 
@@ -22,6 +23,9 @@ function saveProjectsData(data: any[]): void {
     fs.mkdirSync(dir, { recursive: true });
   }
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+  try {
+    revalidatePath('/sitemap.xml');
+  } catch (e) {}
 }
 
 export async function GET(req: NextRequest) {

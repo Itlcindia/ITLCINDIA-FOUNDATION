@@ -103,13 +103,13 @@ export default function DonatePage() {
       .then((data) => {
         if (data?.donate) {
           const d = data.donate;
-          if (d.heading) setMainHeading(d.heading);
-          if (d.subheading) setMainSubheading(d.subheading);
-          if (d.sideImage) setSideImageUrl(d.sideImage);
-          if (d.qrTitle) setQrTitle(d.qrTitle);
-          if (d.qrDescription) setQrDescription(d.qrDescription);
-          if (d.qrImage) setQrImageUrl(d.qrImage);
-          if (d.upiId) setUpiId(d.upiId);
+          if (d.heading !== undefined) setMainHeading(d.heading);
+          if (d.subheading !== undefined) setMainSubheading(d.subheading);
+          if (d.sideImage !== undefined) setSideImageUrl(d.sideImage);
+          if (d.qrTitle !== undefined) setQrTitle(d.qrTitle);
+          if (d.qrDescription !== undefined) setQrDescription(d.qrDescription);
+          if (d.qrImage !== undefined) setQrImageUrl(d.qrImage || '');
+          if (d.upiId !== undefined) setUpiId(d.upiId || '');
           if (Array.isArray(d.faqs) && d.faqs.length > 0) {
             setFaqs(d.faqs.map((f: any) => ({ q: f.question || f.q, a: f.answer || f.a })));
           }
@@ -439,9 +439,24 @@ export default function DonatePage() {
                   Scan & Pay with any UPI App
                 </p>
                 {upiId && (
-                  <p className="text-xs font-mono font-bold text-gray-700 mt-1">
-                    UPI ID: <span className="text-[#168039]">{upiId}</span>
-                  </p>
+                  <div className="flex items-center justify-center gap-2 mt-2">
+                    <p className="text-xs font-mono font-bold text-gray-700 bg-white/80 px-2.5 py-1 rounded-lg border border-gray-200">
+                      UPI ID: <span className="text-[#168039]">{upiId}</span>
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(upiId);
+                        toast({
+                          title: 'UPI ID Copied',
+                          description: `${upiId} copied to clipboard.`,
+                        });
+                      }}
+                      className="text-[11px] font-bold text-[#168039] hover:text-white bg-white hover:bg-[#168039] px-2 py-1 rounded-lg border border-[#168039] shadow-2xs transition-colors cursor-pointer"
+                    >
+                      Copy
+                    </button>
+                  </div>
                 )}
               
                 <div className="mt-6 w-full space-y-2">

@@ -28,6 +28,7 @@ interface BlogItem {
   readTime: string;
   image: string;
   images?: string[];
+  contentImage?: string;
   tags: string[];
   keyPoints: string[];
   content: string;
@@ -53,6 +54,8 @@ export function BlogsManagerTab() {
   const [formTitle, setFormTitle] = useState('');
   const [formSlug, setFormSlug] = useState('');
   const [formCategory, setFormCategory] = useState('Environment Protection');
+  const [isCustomCategory, setIsCustomCategory] = useState(false);
+  const [customCategoryInput, setCustomCategoryInput] = useState('');
   const [formAuthor, setFormAuthor] = useState('ITLC Foundation');
   const [formAuthorRole, setFormAuthorRole] = useState('Editorial & Field Team');
   const [formStatus, setFormStatus] = useState<'published' | 'draft'>('published');
@@ -66,10 +69,13 @@ export function BlogsManagerTab() {
   const [formKeyPoints, setFormKeyPoints] = useState('');
   const [formTags, setFormTags] = useState('');
   const [formImages, setFormImages] = useState<string[]>([]);
+  const [formContentImage, setFormContentImage] = useState<string>('');
   const [formFaqs, setFormFaqs] = useState<BlogFaqItem[]>([]);
 
-  // Media picker modal for adding images
+  // Media picker modal for adding gallery images
   const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false);
+  // Media picker modal for in-content secondary image
+  const [isContentImagePickerOpen, setIsContentImagePickerOpen] = useState(false);
 
   const categories = [
     'Environment Protection',
@@ -178,9 +184,10 @@ export function BlogsManagerTab() {
         }
       ]);
     }
+    const resolvedCat = isCustomCategory ? (customCategoryInput.trim() || 'Custom Topic') : formCategory;
     toast({
       title: 'FAQs Pre-filled',
-      description: `Loaded 4 suggested FAQs tailored to "${formCategory}".`,
+      description: `Loaded 4 suggested FAQs tailored to "${resolvedCat}".`,
     });
   };
 
@@ -190,6 +197,8 @@ export function BlogsManagerTab() {
     setFormTitle('');
     setFormSlug('');
     setFormCategory('Environment Protection');
+    setIsCustomCategory(false);
+    setCustomCategoryInput('');
     setFormAuthor('ITLC Foundation');
     setFormAuthorRole('Editorial & Field Team');
     setFormStatus('published');
@@ -203,6 +212,7 @@ export function BlogsManagerTab() {
     setFormKeyPoints('');
     setFormTags('Community, UP, NGO');
     setFormImages(['/pro/ab.png']);
+    setFormContentImage('');
     setFormFaqs([]);
     setIsModalOpen(true);
   };
@@ -212,7 +222,17 @@ export function BlogsManagerTab() {
     setEditingId(blog.id || blog.slug);
     setFormTitle(blog.title);
     setFormSlug(blog.slug);
-    setFormCategory(blog.category || 'Environment Protection');
+
+    if (categories.includes(blog.category)) {
+      setFormCategory(blog.category);
+      setIsCustomCategory(false);
+      setCustomCategoryInput('');
+    } else {
+      setFormCategory('__custom__');
+      setIsCustomCategory(true);
+      setCustomCategoryInput(blog.category || '');
+    }
+
     setFormAuthor(blog.author || 'ITLC Foundation');
     setFormAuthorRole(blog.authorRole || 'Editorial & Field Team');
     setFormStatus(blog.status || 'published');
@@ -227,6 +247,7 @@ export function BlogsManagerTab() {
     setFormTags(Array.isArray(blog.tags) ? blog.tags.join(', ') : '');
     const imgs = blog.images && blog.images.length > 0 ? blog.images : [blog.image || '/pro/ab.png'];
     setFormImages(imgs);
+    setFormContentImage(blog.contentImage || (imgs.length > 1 ? imgs[1] : ''));
     setFormFaqs(Array.isArray(blog.faqs) && blog.faqs.length > 0 ? blog.faqs : []);
     setIsModalOpen(true);
   };
@@ -271,13 +292,17 @@ export function BlogsManagerTab() {
       return;
     }
 
+    const resolvedCategory = isCustomCategory
+      ? (customCategoryInput.trim() || 'General Issue')
+      : formCategory;
+
     setIsSaving(true);
     try {
       const payload = {
         id: editingId,
         slug: formSlug.trim() || undefined,
         title: formTitle.trim(),
-        category: formCategory,
+        category: resolvedCategory,
         author: formAuthor.trim(),
         authorRole: formAuthorRole.trim(),
         status: formStatus,
@@ -290,6 +315,7 @@ export function BlogsManagerTab() {
         content: formContent,
         image: formImages[0],
         images: formImages,
+        contentImage: formContentImage.trim(),
         tags: formTags.split(',').map((t) => t.trim()).filter(Boolean),
         keyPoints: formKeyPoints.split('\n').map((k) => k.trim()).filter(Boolean),
         faqs: formFaqs.filter((f) => f.question.trim() && f.answer.trim()),
@@ -590,14 +616,38 @@ export function BlogsManagerTab() {
                 <div>
                   <label className="block font-bold text-gray-700 mb-1">Focus Area Category</label>
                   <select
-                    value={formCategory}
-                    onChange={(e) => setFormCategory(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-gray-300 outline-none focus:border-[#168039] bg-white font-medium"
+                    value={isCustomCategory ? '__custom__' : formCategory}
+                    onChange={(e) => {
+                      if (e.target.value === '__custom__') {
+                        setIsCustomCategory(true);
+                      } else {
+                        setIsCustomCategory(false);
+                        setFormCategory(e.target.value);
+                      }
+                    }}
+                    className="w-full px-3 py-2 rounded-xl border border-gray-300 outline-none focus:border-[#168039] bg-white font-medium text-xs sm:text-sm"
                   >
                     {categories.map((c) => (
                       <option key={c} value={c}>{c}</option>
                     ))}
+                    <option value="__custom__">✨ + Custom / Other Category (Write your own)</option>
                   </select>
+
+                  {isCustomCategory && (
+                    <div className="mt-2 space-y-1 animate-in fade-in slide-in-from-top-1 duration-200">
+                      <input
+                        type="text"
+                        required={isCustomCategory}
+                        value={customCategoryInput}
+                        onChange={(e) => setCustomCategoryInput(e.target.value)}
+                        placeholder="e.g. Healthcare & Medical Camps, Road Safety, Child Welfare..."
+                        className="w-full px-3 py-2 rounded-xl border-2 border-emerald-500/70 bg-emerald-50/40 outline-none focus:border-[#168039] font-semibold text-xs text-slate-900 placeholder:text-gray-400 shadow-xs"
+                      />
+                      <p className="text-[10px] text-emerald-700 font-medium pl-1 flex items-center gap-1">
+                        <span>💡</span> Type any custom social issue or problem in your surroundings.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -826,6 +876,76 @@ export function BlogsManagerTab() {
                 />
               </div>
 
+              {/* ======================================================== */}
+              {/* IN-ARTICLE / CONTENT IMAGE (Optional)                    */}
+              {/* Displayed directly above Detailed Article Body           */}
+              {/* ======================================================== */}
+              <div className="p-4 bg-emerald-50/50 rounded-2xl border border-emerald-200/80 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <label className="font-bold text-gray-900 flex items-center gap-1.5 text-xs">
+                      <ImageIcon className="w-4 h-4 text-[#168039]" />
+                      <span>In-Article Content Image</span>
+                      <span className="text-[10px] font-medium text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
+                        Optional
+                      </span>
+                    </label>
+                    <p className="text-[11px] text-gray-500 mt-0.5">
+                      Yeh image details page par &quot;Detailed Article Content&quot; ke theek upar show hogi.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    {formContentImage && (
+                      <button
+                        type="button"
+                        onClick={() => setFormContentImage('')}
+                        className="text-xs text-red-600 hover:text-red-700 font-semibold px-2.5 py-1 rounded-lg border border-red-200 bg-white hover:bg-red-50 transition-colors flex items-center gap-1 cursor-pointer"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                        <span>Remove</span>
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => setIsContentImagePickerOpen(true)}
+                      className="bg-[#168039] hover:bg-[#137233] text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-2xs cursor-pointer flex items-center gap-1.5"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>{formContentImage ? 'Change Image' : '+ Select Image'}</span>
+                    </button>
+                  </div>
+                </div>
+
+                {formContentImage ? (
+                  <div className="relative h-44 sm:h-52 w-full rounded-xl overflow-hidden border border-emerald-300 bg-slate-900 shadow-xs">
+                    <Image
+                      src={formContentImage}
+                      alt="In-Article Content Preview"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 600px"
+                      className="object-cover"
+                    />
+                    <div className="absolute bottom-2 left-2 bg-black/75 backdrop-blur-xs text-white text-[10px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1">
+                      <span>Live Preview: Positioned just above Detailed Content</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    onClick={() => setIsContentImagePickerOpen(true)}
+                    className="border-2 border-dashed border-emerald-200 hover:border-[#168039] bg-white rounded-xl p-3.5 text-center cursor-pointer transition-all flex items-center justify-center gap-3 group"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform shrink-0">
+                      <ImageIcon className="w-4 h-4" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-xs font-semibold text-gray-700">Koi in-content image set nahi hai (Optional)</p>
+                      <p className="text-[10px] text-gray-400">Yahan click karein ya upar &quot;+ Select Image&quot; button se photo chunein</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* Full Detailed Content (Markdown / Text) */}
               <div>
                 <label className="block font-bold text-gray-700 mb-1">
@@ -996,13 +1116,27 @@ export function BlogsManagerTab() {
         </div>
       )}
 
-      {/* Media Gallery Picker Modal */}
+      {/* Media Gallery Picker Modal for Gallery Images */}
       <MediaGalleryModal
         isOpen={isMediaPickerOpen}
         onClose={() => setIsMediaPickerOpen(false)}
         onSelect={(url) => {
           handleAddImage(url);
           setIsMediaPickerOpen(false);
+        }}
+      />
+
+      {/* Media Gallery Picker Modal for In-Content Secondary Image */}
+      <MediaGalleryModal
+        isOpen={isContentImagePickerOpen}
+        onClose={() => setIsContentImagePickerOpen(false)}
+        onSelect={(url) => {
+          setFormContentImage(url);
+          setIsContentImagePickerOpen(false);
+          toast({
+            title: 'Content Image Selected',
+            description: 'In-article secondary photo successfully updated.',
+          });
         }}
       />
     </div>

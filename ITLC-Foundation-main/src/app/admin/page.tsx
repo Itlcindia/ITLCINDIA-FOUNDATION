@@ -9,7 +9,7 @@ import {
   Mail, MapPin, DollarSign, Calendar, X, Sprout, Check, Loader2,
   Phone, Clock, Sparkles, Globe, BookOpen, ExternalLink, RefreshCw,
   Eye, EyeOff, Search, Download, Printer, Filter, CreditCard, Send,
-  CheckCircle2, AlertCircle, Copy, ArrowUpRight
+  CheckCircle2, AlertCircle, Copy, ArrowUpRight, QrCode, Compass
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ImageUploadField } from '@/components/admin/image-upload-field';
@@ -25,6 +25,7 @@ import { ActivityLogsTab } from '@/components/admin/activity-logs-tab';
 import { ContactInquiriesTab } from '@/components/admin/contact-inquiries-tab';
 import { TeamMembersTab } from '@/components/admin/team-members-tab';
 import { WebsiteInfoTab } from '@/components/admin/website-info-tab';
+import { SitemapIndexingTab } from '@/components/admin/sitemap-indexing-tab';
 
 export default function AdminPage() {
   const { toast } = useToast();
@@ -1103,15 +1104,16 @@ export default function AdminPage() {
     { id: 'contact-inquiries', label: '11. Contact Inquiries Inbox', icon: <Mail className="w-5 h-5" /> },
     { id: 'site-info', label: '12. Website Info (Logo & Favicon)', icon: <Sparkles className="w-5 h-5" /> },
     { id: 'legal-cms', label: '13. Legal & Policy Pages', icon: <ShieldCheck className="w-5 h-5" /> },
-    { id: 'contact-cms', label: '13. Contact & Office Info', icon: <MapPin className="w-5 h-5" /> },
-    { id: 'donate-cms', label: '14. Donate Landing Page', icon: <Heart className="w-5 h-5" /> },
-    { id: 'modal-cms', label: '15. Donation Popup Modal', icon: <CreditCard className="w-5 h-5" /> },
-    { id: 'footer-cms', label: '16. Footer Management', icon: <FileText className="w-5 h-5" /> },
-    { id: 'donations-logs', label: '17. Donation Records (80G)', icon: <DollarSign className="w-5 h-5" /> },
-    { id: 'media-library', label: '18. Media Library', icon: <Upload className="w-5 h-5" /> },
-    { id: 'admin-accounts', label: '19. Admin Accounts & RBAC', icon: <ShieldCheck className="w-5 h-5" /> },
-    { id: 'activity-logs', label: '20. Activity Audit Logs', icon: <Clock className="w-5 h-5" /> },
-    { id: 'settings', label: '21. Settings & Razorpay', icon: <Settings className="w-5 h-5" /> },
+    { id: 'contact-cms', label: '14. Contact & Office Info', icon: <MapPin className="w-5 h-5" /> },
+    { id: 'donate-cms', label: '15. Donate Landing Page', icon: <Heart className="w-5 h-5" /> },
+    { id: 'modal-cms', label: '16. Donation Popup Modal', icon: <CreditCard className="w-5 h-5" /> },
+    { id: 'footer-cms', label: '17. Footer Management', icon: <FileText className="w-5 h-5" /> },
+    { id: 'donations-logs', label: '18. Donation Records (80G)', icon: <DollarSign className="w-5 h-5" /> },
+    { id: 'media-library', label: '19. Media Library', icon: <Upload className="w-5 h-5" /> },
+    { id: 'admin-accounts', label: '20. Admin Accounts & RBAC', icon: <ShieldCheck className="w-5 h-5" /> },
+    { id: 'activity-logs', label: '21. Activity Audit Logs', icon: <Clock className="w-5 h-5" /> },
+    { id: 'settings', label: '22. Settings & Razorpay', icon: <Settings className="w-5 h-5" /> },
+    { id: 'sitemap-indexing', label: '23. Sitemap & Indexing', icon: <Compass className="w-5 h-5" /> },
   ];
 
   return (
@@ -3099,22 +3101,43 @@ export default function AdminPage() {
               {/* ========================================================================= */}
               {/* TAB 8: DONATE PAGE & FLOW CMS                                             */}
               {/* ========================================================================= */}
+              {/* ========================================================================= */}
+              {/* TAB 8: DONATE PAGE & FLOW CMS                                             */}
+              {/* ========================================================================= */}
               {activeTab === 'donate-cms' && (
                 <div className="bg-white p-6 sm:p-7 rounded-3xl border border-gray-200 shadow-2xs space-y-6">
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900">Donate Page &amp; Modal Flow (/donate)</h3>
-                    <p className="text-xs text-gray-500">Edit donation landing page headings, side image, UPI QR code image, and donation FAQs.</p>
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 pb-4">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <Heart className="w-5 h-5 text-[#168039]" />
+                        <h3 className="text-lg font-bold text-gray-900">Donate Landing Page CMS (/donate)</h3>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-0.5">
+                        Edit donation landing page content, side image, UPI QR barcode image, and donation FAQs.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      disabled={isSaving}
+                      onClick={() => saveCmsData()}
+                      className="bg-[#168039] hover:bg-[#137233] text-white px-5 py-2.5 rounded-xl text-xs font-bold cursor-pointer transition-colors shadow-2xs flex items-center gap-1.5"
+                    >
+                      {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
+                      Save Donate Details
+                    </button>
                   </div>
 
-                  <div className="space-y-5">
+                  <div className="space-y-6">
+                    {/* Basic Page Text */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-gray-700 mb-1">Donate Page Main Heading</label>
                         <input
                           type="text"
-                          value={cms.donate.heading}
+                          value={cms.donate?.heading || ''}
                           onChange={(e) => {
                             const updated = { ...cms };
+                            if (!updated.donate) updated.donate = {};
                             updated.donate.heading = e.target.value;
                             setCms(updated);
                           }}
@@ -3122,27 +3145,14 @@ export default function AdminPage() {
                         />
                       </div>
 
-                      <div>
-                        <label className="block text-xs font-bold text-gray-700 mb-1">UPI ID</label>
-                        <input
-                          type="text"
-                          value={cms.donate.upiId}
-                          onChange={(e) => {
-                            const updated = { ...cms };
-                            updated.donate.upiId = e.target.value;
-                            setCms(updated);
-                          }}
-                          className="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-xs font-mono outline-none"
-                        />
-                      </div>
-
-                      <div className="sm:col-span-2">
+                      <div className="sm:col-span-1">
                         <label className="block text-xs font-bold text-gray-700 mb-1">Donate Page Subheading</label>
                         <input
                           type="text"
-                          value={cms.donate.subheading}
+                          value={cms.donate?.subheading || ''}
                           onChange={(e) => {
                             const updated = { ...cms };
+                            if (!updated.donate) updated.donate = {};
                             updated.donate.subheading = e.target.value;
                             setCms(updated);
                           }}
@@ -3151,32 +3161,133 @@ export default function AdminPage() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-                      <div className="min-w-0">
-                        <ImageUploadField
-                          label="Donate Page Side Image"
-                          value={cms.donate.sideImage}
-                          onChange={(url) => {
-                            const updated = { ...cms };
-                            updated.donate.sideImage = url;
-                            setCms(updated);
-                          }}
-                          aspect="square"
-                        />
+                    <div className="min-w-0 max-w-md">
+                      <ImageUploadField
+                        label="Donate Page Side Image"
+                        value={cms.donate?.sideImage || ''}
+                        onChange={(url) => {
+                          const updated = { ...cms };
+                          if (!updated.donate) updated.donate = {};
+                          updated.donate.sideImage = url;
+                          setCms(updated);
+                        }}
+                        aspect="square"
+                      />
+                    </div>
+
+                    {/* ========================================================================= */}
+                    {/* DEDICATED UPI QR CODE & BARCODE SCANNER MANAGEMENT CARD                   */}
+                    {/* ========================================================================= */}
+                    <div className="p-5 rounded-2xl bg-emerald-50/40 border border-emerald-200/80 space-y-4">
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-emerald-100 pb-3">
+                        <div>
+                          <h4 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                            <QrCode className="w-4 h-4 text-[#168039]" /> Official UPI QR Code &amp; Barcode Scanner
+                          </h4>
+                          <p className="text-[11px] text-gray-500">
+                            Upload, change or delete the official UPI QR barcode shown on the /donate page.
+                          </p>
+                        </div>
+                        {cms.donate?.qrImage ? (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-full">
+                            <CheckCircle2 className="w-3 h-3 text-emerald-700" /> Active on /donate
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-800 bg-amber-100 px-2.5 py-1 rounded-full">
+                            <AlertCircle className="w-3 h-3 text-amber-700" /> Removed / Hidden on /donate
+                          </span>
+                        )}
                       </div>
 
-                      <div className="min-w-0">
-                        <ImageUploadField
-                          label="Official UPI QR Code Image"
-                          hint="Displayed on /donate for instant scanning"
-                          value={cms.donate.qrImage}
-                          onChange={(url) => {
-                            const updated = { ...cms };
-                            updated.donate.qrImage = url;
-                            setCms(updated);
-                          }}
-                          aspect="square"
-                        />
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                        <div className="space-y-3">
+                          <ImageUploadField
+                            label="UPI QR Barcode Image"
+                            hint="Instant scanning on /donate via GPay, PhonePe, Paytm, BHIM"
+                            value={cms.donate?.qrImage || ''}
+                            onChange={(url) => {
+                              const updated = { ...cms };
+                              if (!updated.donate) updated.donate = {};
+                              updated.donate.qrImage = url;
+                              setCms(updated);
+                            }}
+                            aspect="square"
+                          />
+
+                          {cms.donate?.qrImage ? (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const updated = { ...cms };
+                                if (!updated.donate) updated.donate = {};
+                                updated.donate.qrImage = '';
+                                setCms(updated);
+                                toast({
+                                  title: 'QR Code Removed',
+                                  description: 'QR Code cleared. Click "Save Donate Details" to persist changes live.',
+                                });
+                              }}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-red-600 hover:text-white bg-red-50 hover:bg-red-600 border border-red-200 hover:border-red-600 rounded-xl transition-all cursor-pointer"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                              <span>Delete QR Code from Donate Page</span>
+                            </button>
+                          ) : (
+                            <p className="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-xl p-2.5">
+                              ℹ️ <strong>QR Code is currently deleted.</strong> The QR Scanner card is hidden on the /donate page. Upload an image above to activate it again.
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="space-y-3">
+                          <div>
+                            <label className="block text-xs font-bold text-gray-700 mb-1">Official UPI ID</label>
+                            <input
+                              type="text"
+                              value={cms.donate?.upiId || ''}
+                              onChange={(e) => {
+                                const updated = { ...cms };
+                                if (!updated.donate) updated.donate = {};
+                                updated.donate.upiId = e.target.value;
+                                setCms(updated);
+                              }}
+                              placeholder="e.g. itlc@upi"
+                              className="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-xs font-mono outline-none bg-white focus:border-[#168039]"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-bold text-gray-700 mb-1">QR Box Heading</label>
+                            <input
+                              type="text"
+                              value={cms.donate?.qrTitle || 'Scan to Support Our NGO'}
+                              onChange={(e) => {
+                                const updated = { ...cms };
+                                if (!updated.donate) updated.donate = {};
+                                updated.donate.qrTitle = e.target.value;
+                                setCms(updated);
+                              }}
+                              placeholder="Scan to Support Our NGO"
+                              className="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-xs outline-none bg-white focus:border-[#168039]"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-bold text-gray-700 mb-1">QR Box Description / Subtitle</label>
+                            <textarea
+                              rows={2}
+                              value={cms.donate?.qrDescription || 'Quickly donate to our Lucknow projects via any UPI App'}
+                              onChange={(e) => {
+                                const updated = { ...cms };
+                                if (!updated.donate) updated.donate = {};
+                                updated.donate.qrDescription = e.target.value;
+                                setCms(updated);
+                              }}
+                              placeholder="Quickly donate to our Lucknow projects via any UPI App"
+                              className="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-xs outline-none bg-white focus:border-[#168039]"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
 
@@ -3194,7 +3305,7 @@ export default function AdminPage() {
                       </div>
 
                       <div className="space-y-3">
-                        {cms.donate.faqs.map((faq: any) => (
+                        {(cms.donate?.faqs || []).map((faq: any) => (
                           <div key={faq.id} className="p-3.5 bg-gray-50 rounded-xl border border-gray-200 flex items-start justify-between">
                             <div className="space-y-1">
                               <div className="font-bold text-xs text-gray-900">{faq.question}</div>
@@ -3220,14 +3331,22 @@ export default function AdminPage() {
                         ))}
                       </div>
                     </div>
+
+                    {/* Save Footer Button */}
+                    <div className="pt-4 border-t border-gray-100 flex items-center justify-end">
+                      <button
+                        type="button"
+                        disabled={isSaving}
+                        onClick={() => saveCmsData()}
+                        className="bg-[#168039] hover:bg-[#137233] text-white px-7 py-3 rounded-2xl text-xs sm:text-sm font-bold transition-all shadow-md flex items-center gap-2 cursor-pointer"
+                      >
+                        {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                        <span>Save Donate Page Details</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
-
-              
-              {/* ========================================================================= */}
-              {/* TAB 9: DONATION POPUP MODAL CMS (BARCODE, PRESETS, TEXTS, SUCCESS)        */}
-              {/* ========================================================================= */}
               {activeTab === 'modal-cms' && (
                 <div className="bg-white p-6 sm:p-7 rounded-3xl border border-gray-200 shadow-2xs space-y-8">
                   <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 pb-4">
@@ -3265,7 +3384,7 @@ export default function AdminPage() {
                         <ImageUploadField
                           label="Official UPI Barcode / QR Code Image"
                           hint="Displayed inside the popup modal for instant scanning via GPay, PhonePe, Paytm, BHIM"
-                          value={cms.donationModal?.qrImage || '/qr.png'}
+                          value={cms.donationModal?.qrImage ?? ''}
                           onChange={(url) => {
                             const updated = { ...cms };
                             if (!updated.donationModal) updated.donationModal = {};
@@ -3274,6 +3393,30 @@ export default function AdminPage() {
                           }}
                           aspect="square"
                         />
+
+                        {cms.donationModal?.qrImage ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const updated = { ...cms };
+                              if (!updated.donationModal) updated.donationModal = {};
+                              updated.donationModal.qrImage = '';
+                              setCms(updated);
+                              toast({
+                                title: 'Modal QR Code Removed',
+                                description: 'QR Code cleared. Click "Save Modal Configuration" to persist live.',
+                              });
+                            }}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-red-600 hover:text-white bg-red-50 hover:bg-red-600 border border-red-200 hover:border-red-600 rounded-xl transition-all cursor-pointer mt-2"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Delete QR Code from Modal</span>
+                          </button>
+                        ) : (
+                          <p className="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-xl p-2.5 mt-2">
+                            ℹ️ <strong>QR Code is currently deleted.</strong> UPI QR code is hidden in the donation popup modal.
+                          </p>
+                        )}
                       </div>
 
                       <div className="space-y-4 min-w-0">
@@ -4445,6 +4588,13 @@ export default function AdminPage() {
               {/* ========================================================================= */}
               {activeTab === 'activity-logs' && (
                 <ActivityLogsTab />
+              )}
+
+              {/* ========================================================================= */}
+              {/* TAB 23: SITEMAP & GOOGLE SEARCH INDEXING                                  */}
+              {/* ========================================================================= */}
+              {activeTab === 'sitemap-indexing' && (
+                <SitemapIndexingTab />
               )}
             </div>
           )}

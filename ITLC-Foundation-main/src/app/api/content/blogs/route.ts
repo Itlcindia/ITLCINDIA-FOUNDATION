@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import fs from 'fs';
 import path from 'path';
 
@@ -84,6 +85,7 @@ export async function POST(req: NextRequest) {
       readTime: body.readTime || '5 min read',
       image: images[0] || '/pro/ab.png',
       images,
+      contentImage: body.contentImage ? String(body.contentImage).trim() : '',
       tags: Array.isArray(body.tags) ? body.tags : (body.tags ? body.tags.split(',').map((t: string) => t.trim()) : ['Community', 'UP']),
       keyPoints: Array.isArray(body.keyPoints) ? body.keyPoints : (body.keyPoints ? body.keyPoints.split('\n').map((k: string) => k.trim()).filter(Boolean) : []),
       content: body.content || '',
@@ -110,6 +112,7 @@ export async function POST(req: NextRequest) {
     }
 
     saveBlogsData(blogs);
+    try { revalidatePath('/sitemap.xml'); } catch (e) {}
     return NextResponse.json({ success: true, blog: newBlog, message: 'Blog saved successfully' });
   } catch (err: any) {
     console.error('Error saving blog:', err);
@@ -135,6 +138,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     saveBlogsData(filtered);
+    try { revalidatePath('/sitemap.xml'); } catch (e) {}
     return NextResponse.json({ success: true, message: 'Blog deleted successfully' });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });

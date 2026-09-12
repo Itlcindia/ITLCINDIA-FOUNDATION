@@ -10,6 +10,7 @@ export interface BlogPost {
   readTime: string;
   image: string;
   images?: string[];
+  contentImage?: string;
   tags: string[];
   keyPoints: string[];
   content: string;
@@ -37,6 +38,7 @@ export function getBlogBySlug(slug: string): BlogPost | undefined {
 export const BLOG_POSTS: BlogPost[] = [
   {
     slug: 'environmental-protection-tree-plantation-lucknow-uttar-pradesh',
+    contentImage: '/ref/story_3_hd.jpg',
     title: 'Environmental Protection in Uttar Pradesh: How Massive Tree Plantation Drives are Restoring Lucknow’s Green Canopy',
     category: 'Environment Protection',
     excerpt: 'Rapid urbanization in Lucknow and central UP has heightened heat islands and air pollution. Discover how community-led native afforestation is bringing back clean air and biodiversity.',
@@ -96,6 +98,7 @@ Together, we can build a resilient, breathable, and verdant Uttar Pradesh for ge
   },
   {
     slug: 'animal-welfare-stray-rescue-feeding-care-uttar-pradesh',
+    contentImage: '/causes/animal_feeding_drive.jpg',
     title: 'Compassion in Action: Stray Animal Welfare, Rescue, and Emergency Medical Care Across Lucknow',
     category: 'Animal Welfare',
     excerpt: 'Street dogs, abandoned cows, and birds face extreme hunger, road trauma, and climate stress. Learn how ITLC Foundation is providing emergency veterinary first aid, daily feeding, and humane rehabilitation.',
@@ -159,6 +162,7 @@ Cruelty, relocation, or culling is both illegal under the Prevention of Cruelty 
   },
   {
     slug: 'women-empowerment-skill-development-rural-uttar-pradesh',
+    contentImage: '/causes/women_shg_workshop.jpg',
     title: 'Empowering Women in Rural Uttar Pradesh: Vocational Training, Self-Help Groups, and Economic Independence',
     category: 'Women Empowerment',
     excerpt: 'When a woman earns, her entire family flourishes. Explore how sewing centers, digital financial literacy, and self-help collectives are transforming the lives of women in peri-urban Lucknow.',
@@ -223,6 +227,7 @@ True progress in Uttar Pradesh cannot be achieved if half of its population rema
   },
   {
     slug: 'education-support-underprivileged-slum-children-lucknow',
+    contentImage: '/ref/project_education_hd.jpg',
     title: 'Bridging the Learning Divide: Quality Education Support for Underprivileged and Slum Children in Lucknow',
     category: 'Education Support',
     excerpt: 'Poverty should never be a barrier to a child’s imagination and learning. Read how free school kits, remedial coaching, and digital classrooms are keeping vulnerable children in school.',
@@ -286,6 +291,7 @@ Partner with ITLC Foundation today by sponsoring a child’s educational kit or 
   },
   {
     slug: 'clean-water-sanitation-hygiene-communities-uttar-pradesh',
+    contentImage: '/causes/clean_water_hygiene.jpg',
     title: 'Clean Water & Sanitation: Ensuring Safe Drinking Water and Hygiene Awareness in Semi-Urban Communities',
     category: 'Clean Water & Sanitation',
     excerpt: 'Waterborne diseases rob children of school days and drain family savings. Discover our initiatives to install water testing, clean storage systems, and health hygiene workshops in UP.',
@@ -339,6 +345,7 @@ ITLC Foundation remains dedicated to expanding our safe water storage distributi
   },
   {
     slug: 'social-welfare-grassroots-community-upliftment-uttar-pradesh',
+    contentImage: '/ref/story_4_hd.jpg',
     title: 'Grassroots Social Welfare in Uttar Pradesh: Winter Relief, Food Security, and Holistic Community Care',
     category: 'Social Welfare',
     excerpt: 'From freezing winter nights on pavements to emergency hunger relief, discover how ITLC Foundation provides immediate humanitarian aid while building long-term community resilience.',

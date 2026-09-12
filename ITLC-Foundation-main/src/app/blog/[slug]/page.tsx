@@ -308,6 +308,7 @@ export default function BlogPostDetailPage({ params }: { params: Promise<{ slug:
   }
 
   const images = post.images && post.images.length > 0 ? post.images : [post.image || '/pro/ab.png'];
+  const secondaryImage = post.contentImage || (images.length > 1 && images[1] !== images[0] ? images[1] : null);
   const allOtherPosts = getAllBlogs().filter((p: BlogPost) => p.slug !== post.slug);
   const relatedPosts: BlogPost[] = allOtherPosts;
   const bottomFourPosts: BlogPost[] = allOtherPosts.slice(0, 4);
@@ -462,47 +463,14 @@ export default function BlogPostDetailPage({ params }: { params: Promise<{ slug:
           {/* Left Column: Full Detailed Article */}
           <article className="lg:col-span-8 bg-white rounded-3xl p-6 sm:p-10 lg:p-12 shadow-sm border border-slate-200/80 space-y-8">
           
-          {/* Header Metadata */}
-          <div className="space-y-4">
-            <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500">
-              <span className="flex items-center gap-1">
-                <Calendar className="w-3.5 h-3.5 text-[#168039]" />
-                <span>{post.date}</span>
-              </span>
-              <span>&bull;</span>
-              <span className="flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5 text-[#168039]" />
-                <span>{post.readTime}</span>
-              </span>
-              <span>&bull;</span>
-              <span className="flex items-center gap-1">
-                <User className="w-3.5 h-3.5 text-[#168039]" />
-                <span>{post.author}</span>
-                {post.authorRole && (
-                  <span className="text-slate-400 font-medium">({post.authorRole})</span>
-                )}
-              </span>
-            </div>
-
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 leading-tight font-headline tracking-tight">
-              {post.title}
-            </h1>
-
-            <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-sans italic border-l-4 border-[#168039] pl-4 py-1 bg-slate-50 rounded-r-xl">
-              {post.excerpt}
-            </p>
-          </div>
-
           {/* ======================================================== */}
-          {/* 📢 AD SLOT 1: Below Article Title & Meta                 */}
+          {/* 📸 IMAGE 1: TOP PRIMARY FEATURED IMAGE / GALLERY         */}
+          {/* Displayed prominently at the very top of the article     */}
           {/* ======================================================== */}
-          <BlogAdSlot slotKey="slot1" config={blogAds?.slot1} />
-
-          {/* Multi-Image Gallery / Primary Featured Image */}
           <div className="space-y-3">
-            <div className="relative aspect-video w-full rounded-2xl overflow-hidden shadow-md bg-slate-100 border border-slate-200">
+            <div className="relative aspect-video sm:aspect-16/9 w-full rounded-2xl overflow-hidden shadow-md bg-slate-100 border border-slate-200">
               <Image
-                src={images[activeImgIdx] || '/pro/ab.png'}
+                src={images[activeImgIdx] || post.image || '/pro/ab.png'}
                 alt={post.title}
                 fill
                 priority
@@ -536,6 +504,37 @@ export default function BlogPostDetailPage({ params }: { params: Promise<{ slug:
             )}
           </div>
 
+          {/* Header Metadata & Title */}
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500">
+              <span className="flex items-center gap-1">
+                <Calendar className="w-3.5 h-3.5 text-[#168039]" />
+                <span>{post.date}</span>
+              </span>
+              <span>&bull;</span>
+              <span className="flex items-center gap-1">
+                <Clock className="w-3.5 h-3.5 text-[#168039]" />
+                <span>{post.readTime}</span>
+              </span>
+              <span>&bull;</span>
+              <span className="flex items-center gap-1">
+                <User className="w-3.5 h-3.5 text-[#168039]" />
+                <span>{post.author}</span>
+                {post.authorRole && (
+                  <span className="text-slate-400 font-medium">({post.authorRole})</span>
+                )}
+              </span>
+            </div>
+
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 leading-tight font-headline tracking-tight">
+              {post.title}
+            </h1>
+
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed font-sans italic border-l-4 border-[#168039] pl-4 py-1 bg-slate-50 rounded-r-xl">
+              {post.excerpt}
+            </p>
+          </div>
+
           {/* Key Takeaways Box */}
           {post.keyPoints && post.keyPoints.length > 0 && (
             <div className="bg-emerald-50/60 border border-emerald-200/80 rounded-2xl p-5 sm:p-6 space-y-3">
@@ -551,6 +550,32 @@ export default function BlogPostDetailPage({ params }: { params: Promise<{ slug:
                   </li>
                 ))}
               </ul>
+            </div>
+          )}
+
+          {/* ======================================================== */}
+          {/* 📢 AD SLOT 1: Below Summary / Key Highlights             */}
+          {/* ======================================================== */}
+          <BlogAdSlot slotKey="slot1" config={blogAds?.slot1} />
+
+          {/* ======================================================== */}
+          {/* 📸 IMAGE 2: IN-ARTICLE / DETAILED CONTENT IMAGE          */}
+          {/* Displayed directly above Detailed Article Body           */}
+          {/* ======================================================== */}
+          {secondaryImage && (
+            <div className="space-y-2 pt-2">
+              <div className="relative aspect-video sm:aspect-21/9 w-full rounded-2xl overflow-hidden shadow-md bg-slate-100 border border-slate-200">
+                <Image
+                  src={secondaryImage}
+                  alt={`${post.title} - In-Article Photo`}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 800px"
+                  className="object-cover"
+                />
+              </div>
+              <p className="text-[11px] text-slate-500 italic text-center">
+                On-ground field photo &amp; initiative highlights
+              </p>
             </div>
           )}
 

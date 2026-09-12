@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
+import Script from 'next/script';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
@@ -16,14 +17,14 @@ export const metadata: Metadata = {
   description: 'Serving Humanity. Protecting Nature. Saving Lives.',
   icons: {
     icon: [
-      { url: '/favicon.ico', sizes: 'any' },
-      { url: '/icon.png', type: 'image/png', sizes: '32x32' },
-      { url: '/favicon.png', type: 'image/png', sizes: '32x32' },
+      { url: '/favicon.png?v=2', type: 'image/png', sizes: '32x32' },
+      { url: '/logo-icon.png?v=2', type: 'image/png', sizes: '192x192' },
+      { url: '/favicon.ico?v=2', sizes: 'any' },
       { url: '/ref/logo.png', type: 'image/png' },
     ],
-    shortcut: '/favicon.ico',
+    shortcut: '/favicon.ico?v=2',
     apple: [
-      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+      { url: '/apple-touch-icon.png?v=2', sizes: '180x180', type: 'image/png' },
     ],
   },
   verification: {
@@ -40,29 +41,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Favicon & Web Icons */}
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/icon.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-
-        {/* Razorpay Standard Checkout Gateway Script */}
-        <script async src="https://checkout.razorpay.com/v1/checkout.js" />
+        {/* Favicon & Web Icons (ITLC Official Foundation Logo) */}
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=2" />
+        <link rel="icon" type="image/png" sizes="192x192" href="/logo-icon.png?v=2" />
+        <link rel="shortcut icon" href="/favicon.ico?v=2" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2" />
 
         {/* Google Search Console Verification */}
         <meta name="google-site-verification" content="PGhV84C11AofLbbgcqGSqWfOF6Su5x10bykyx3E3Ptg" />
 
         {/* Google AdSense Meta Verification */}
         <meta name="google-adsense-account" content="ca-pub-5020716602157264" />
-
-        {/* Google AdSense Script */}
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5020716602157264"
-          crossOrigin="anonymous"
-        />
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -80,6 +71,45 @@ export default function RootLayout({
           'min-h-screen bg-background font-body antialiased'
         )}
       >
+        {/* Google Tag Manager Script (Hydration-safe Next.js Script) */}
+        <Script
+          id="google-tag-manager"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-WZZ54M84');`,
+          }}
+        />
+
+        {/* Razorpay Standard Checkout Gateway Script */}
+        <Script
+          id="razorpay-checkout"
+          src="https://checkout.razorpay.com/v1/checkout.js"
+          strategy="lazyOnload"
+        />
+
+        {/* Google AdSense Script */}
+        <Script
+          id="adsbygoogle-script"
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5020716602157264"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+
+        {/* Google Tag Manager (noscript) */}
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-WZZ54M84"
+            height="0"
+            width="0"
+            style={{ display: 'none', visibility: 'hidden' }}
+          />
+        </noscript>
+        {/* End Google Tag Manager (noscript) */}
         <DonationModalProvider>
           <Suspense fallback={null}>
             <RouteProgressBar />
