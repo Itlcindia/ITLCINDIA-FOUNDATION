@@ -50,6 +50,46 @@ const nextConfig: NextConfig = {
         destination: '/sitemap',
         permanent: true,
       },
+      {
+        source: '/sitemap.XML',
+        destination: '/sitemap.xml',
+        permanent: true,
+      },
+      {
+        source: '/sitmap.xml',
+        destination: '/sitemap.xml',
+        permanent: true,
+      },
+      {
+        source: '/sitmap.XML',
+        destination: '/sitemap.xml',
+        permanent: true,
+      },
+      {
+        source: '/sitemaps',
+        destination: '/sitemap.xml',
+        permanent: true,
+      },
+      {
+        source: '/sitemaps.xml',
+        destination: '/sitemap.xml',
+        permanent: true,
+      },
+      {
+        source: '/site-map.xml',
+        destination: '/sitemap.xml',
+        permanent: true,
+      },
+      {
+        source: '/sitemap-index.xml',
+        destination: '/sitemap.xml',
+        permanent: true,
+      },
+      {
+        source: '/sitemap_index.xml',
+        destination: '/sitemap.xml',
+        permanent: true,
+      },
     ];
   },
   async rewrites() {
