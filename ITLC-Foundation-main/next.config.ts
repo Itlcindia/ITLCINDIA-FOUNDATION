@@ -51,22 +51,7 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: '/sitemap.XML',
-        destination: '/sitemap.xml',
-        permanent: true,
-      },
-      {
         source: '/sitmap.xml',
-        destination: '/sitemap.xml',
-        permanent: true,
-      },
-      {
-        source: '/sitmap.XML',
-        destination: '/sitemap.xml',
-        permanent: true,
-      },
-      {
-        source: '/sitemaps',
         destination: '/sitemap.xml',
         permanent: true,
       },
