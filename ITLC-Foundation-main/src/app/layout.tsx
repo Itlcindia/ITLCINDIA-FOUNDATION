@@ -71,6 +71,25 @@ export default function RootLayout({
           'min-h-screen bg-background font-body antialiased'
         )}
       >
+        {/* Google Analytics 4 Tag (gtag.js) */}
+        <Script
+          id="google-analytics-tag"
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=G-5Q2MDHH8H8"
+        />
+        <Script
+          id="google-analytics-config"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-5Q2MDHH8H8');
+            `,
+          }}
+        />
+
         {/* Google Tag Manager Script (Hydration-safe Next.js Script) */}
         <Script
           id="google-tag-manager"
