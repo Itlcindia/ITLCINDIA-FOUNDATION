@@ -38,6 +38,7 @@ let tablesEnsured = false;
 async function ensureBlogsTables(pool: any) {
   if (tablesEnsured) return;
   try {
+    // 1. Categories Table
     await pool.execute(`
       CREATE TABLE IF NOT EXISTS \`blog_categories\` (
         \`id\` INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
@@ -49,6 +50,7 @@ async function ensureBlogsTables(pool: any) {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
 
+    // 2. Blogs Table
     await pool.execute(`
       CREATE TABLE IF NOT EXISTS \`blogs\` (
         \`id\` BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
@@ -86,6 +88,22 @@ async function ensureBlogsTables(pool: any) {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
 
+    // 3. Auto-Migrate: Ensure content_image_url exists in blogs table
+    try {
+      const [cols]: any = await pool.execute(
+        `SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'blogs' AND COLUMN_NAME = 'content_image_url'`
+      );
+      if (!cols || cols.length === 0) {
+        await pool.execute(
+          `ALTER TABLE \`blogs\` ADD COLUMN \`content_image_url\` VARCHAR(500) DEFAULT NULL AFTER \`images_json\``
+        );
+        console.log('[DB Migration] Added missing content_image_url column to blogs table.');
+      }
+    } catch (colErr: any) {
+      console.warn('[DB Migration] Column check note:', colErr?.message || colErr);
+    }
+
+    // 4. FAQs Table
     await pool.execute(`
       CREATE TABLE IF NOT EXISTS \`blog_faqs\` (
         \`id\` BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
@@ -132,7 +150,19 @@ async function seedBlogsIfEmpty(pool: any) {
   }
 }
 
+async function checkHasContentImageColumn(pool: any): Promise<boolean> {
+  try {
+    const [cols]: any = await pool.execute(
+      `SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'blogs' AND COLUMN_NAME = 'content_image_url'`
+    );
+    return Boolean(cols && cols.length > 0);
+  } catch (e) {
+    return false;
+  }
+}
+
 async function saveBlogToDb(pool: any, blog: any): Promise<number | null> {
+  // 1. Category Mapping
   let categoryId: number | null = null;
   const catName = (blog.category || 'General').trim();
   const catSlug = catName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'general';
@@ -148,6 +178,7 @@ async function saveBlogToDb(pool: any, blog: any): Promise<number | null> {
     console.warn('[DB Blogs] Category mapping warning:', e);
   }
 
+  // 2. Prepare blog data
   const status = blog.status === 'draft' ? 'draft' : 'published';
   const isFeatured = blog.isFeatured ? 1 : 0;
   const tagsJson = JSON.stringify(Array.isArray(blog.tags) ? blog.tags : ['Community', 'UP']);
@@ -158,59 +189,115 @@ async function saveBlogToDb(pool: any, blog: any): Promise<number | null> {
   const parsedDate = blog.date ? new Date(blog.date) : new Date();
   const publishedAt = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
 
-  const sql = `
-    INSERT INTO blogs (
-      category_id, slug, title, excerpt, author, image_url, images_json,
-      content_image_url, content, tags_json, key_points_json, read_time,
-      design_style, meta_title, meta_description, status, is_featured, published_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ON DUPLICATE KEY UPDATE
-      category_id = VALUES(category_id),
-      title = VALUES(title),
-      excerpt = VALUES(excerpt),
-      author = VALUES(author),
-      image_url = VALUES(image_url),
-      images_json = VALUES(images_json),
-      content_image_url = VALUES(content_image_url),
-      content = VALUES(content),
-      tags_json = VALUES(tags_json),
-      key_points_json = VALUES(key_points_json),
-      read_time = VALUES(read_time),
-      design_style = VALUES(design_style),
-      meta_title = VALUES(meta_title),
-      meta_description = VALUES(meta_description),
-      status = VALUES(status),
-      is_featured = VALUES(is_featured),
-      published_at = VALUES(published_at),
-      updated_at = CURRENT_TIMESTAMP
-  `;
+  // Check if content_image_url column exists in live schema
+  const hasContentImageCol = await checkHasContentImageColumn(pool);
 
-  const params = [
-    categoryId,
-    blog.slug,
-    blog.title,
-    blog.excerpt || '',
-    blog.author || 'ITLC Foundation',
-    mainImage,
-    imagesJson,
-    blog.contentImage || '',
-    blog.content || '',
-    tagsJson,
-    keyPointsJson,
-    blog.readTime || '6 min read',
-    blog.authorRole || '',
-    blog.metaTitle || '',
-    blog.metaDescription || '',
-    status,
-    isFeatured,
-    publishedAt,
-  ];
+  if (hasContentImageCol) {
+    const sql = `
+      INSERT INTO blogs (
+        category_id, slug, title, excerpt, author, image_url, images_json,
+        content_image_url, content, tags_json, key_points_json, read_time,
+        design_style, meta_title, meta_description, status, is_featured, published_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE
+        category_id = VALUES(category_id),
+        title = VALUES(title),
+        excerpt = VALUES(excerpt),
+        author = VALUES(author),
+        image_url = VALUES(image_url),
+        images_json = VALUES(images_json),
+        content_image_url = VALUES(content_image_url),
+        content = VALUES(content),
+        tags_json = VALUES(tags_json),
+        key_points_json = VALUES(key_points_json),
+        read_time = VALUES(read_time),
+        design_style = VALUES(design_style),
+        meta_title = VALUES(meta_title),
+        meta_description = VALUES(meta_description),
+        status = VALUES(status),
+        is_featured = VALUES(is_featured),
+        published_at = VALUES(published_at),
+        updated_at = CURRENT_TIMESTAMP
+    `;
 
-  await pool.execute(sql, params);
+    const params = [
+      categoryId,
+      blog.slug,
+      blog.title,
+      blog.excerpt || '',
+      blog.author || 'ITLC Foundation',
+      mainImage,
+      imagesJson,
+      blog.contentImage || '',
+      blog.content || '',
+      tagsJson,
+      keyPointsJson,
+      blog.readTime || '6 min read',
+      blog.authorRole || '',
+      blog.metaTitle || '',
+      blog.metaDescription || '',
+      status,
+      isFeatured,
+      publishedAt,
+    ];
 
+    await pool.execute(sql, params);
+  } else {
+    // Graceful fallback for database schemas where content_image_url does not exist
+    const sql = `
+      INSERT INTO blogs (
+        category_id, slug, title, excerpt, author, image_url, images_json,
+        content, tags_json, key_points_json, read_time,
+        design_style, meta_title, meta_description, status, is_featured, published_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE
+        category_id = VALUES(category_id),
+        title = VALUES(title),
+        excerpt = VALUES(excerpt),
+        author = VALUES(author),
+        image_url = VALUES(image_url),
+        images_json = VALUES(images_json),
+        content = VALUES(content),
+        tags_json = VALUES(tags_json),
+        key_points_json = VALUES(key_points_json),
+        read_time = VALUES(read_time),
+        design_style = VALUES(design_style),
+        meta_title = VALUES(meta_title),
+        meta_description = VALUES(meta_description),
+        status = VALUES(status),
+        is_featured = VALUES(is_featured),
+        published_at = VALUES(published_at),
+        updated_at = CURRENT_TIMESTAMP
+    `;
+
+    const params = [
+      categoryId,
+      blog.slug,
+      blog.title,
+      blog.excerpt || '',
+      blog.author || 'ITLC Foundation',
+      mainImage,
+      imagesJson,
+      blog.content || '',
+      tagsJson,
+      keyPointsJson,
+      blog.readTime || '6 min read',
+      blog.authorRole || '',
+      blog.metaTitle || '',
+      blog.metaDescription || '',
+      status,
+      isFeatured,
+      publishedAt,
+    ];
+
+    await pool.execute(sql, params);
+  }
+
+  // Get inserted / updated blog id
   const [blogRows]: any = await pool.execute('SELECT id FROM blogs WHERE slug = ? LIMIT 1', [blog.slug]);
   const blogId = blogRows && blogRows[0] ? blogRows[0].id : null;
 
+  // Insert FAQs if any
   if (blogId && Array.isArray(blog.faqs)) {
     try {
       await pool.execute('DELETE FROM blog_faqs WHERE blog_id = ?', [blogId]);
