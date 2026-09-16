@@ -88,13 +88,13 @@ export function Footer() {
           <div className="flex flex-col items-start space-y-4">
             <div className="flex flex-col items-center gap-3.5">
               <Link href="/" className="inline-flex items-center justify-center group cursor-pointer" aria-label="ITLC Foundation Home">
-                <div className="bg-white p-2.5 sm:p-3 rounded-2xl shadow-md border border-white/30 flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105">
+                <div className="bg-white rounded-full p-2 sm:p-2.5 flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 shadow-md">
                   <Image
                     src={logo || '/ref/logo.png'}
                     alt="ITLC Foundation Logo"
-                    width={220}
-                    height={100}
-                    className="h-20 md:h-24 w-auto object-contain"
+                    width={96}
+                    height={96}
+                    className="h-16 w-16 md:h-20 md:w-20 object-contain"
                   />
                 </div>
               </Link>

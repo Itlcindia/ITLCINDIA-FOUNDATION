@@ -17,14 +17,14 @@ export const metadata: Metadata = {
   description: 'Serving Humanity. Protecting Nature. Saving Lives.',
   icons: {
     icon: [
-      { url: '/favicon.png?v=2', type: 'image/png', sizes: '32x32' },
-      { url: '/logo-icon.png?v=2', type: 'image/png', sizes: '192x192' },
-      { url: '/favicon.ico?v=2', sizes: 'any' },
+      { url: '/favicon.png?v=3', type: 'image/png', sizes: '32x32' },
+      { url: '/logo-icon.png?v=3', type: 'image/png', sizes: '192x192' },
+      { url: '/favicon.ico?v=3', sizes: 'any' },
       { url: '/ref/logo.png', type: 'image/png' },
     ],
-    shortcut: '/favicon.ico?v=2',
+    shortcut: '/favicon.ico?v=3',
     apple: [
-      { url: '/apple-touch-icon.png?v=2', sizes: '180x180', type: 'image/png' },
+      { url: '/apple-touch-icon.png?v=3', sizes: '180x180', type: 'image/png' },
     ],
   },
   verification: {
@@ -44,10 +44,10 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         {/* Favicon & Web Icons (ITLC Official Foundation Logo) */}
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=2" />
-        <link rel="icon" type="image/png" sizes="192x192" href="/logo-icon.png?v=2" />
-        <link rel="shortcut icon" href="/favicon.ico?v=2" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=3" />
+        <link rel="icon" type="image/png" sizes="192x192" href="/logo-icon.png?v=3" />
+        <link rel="shortcut icon" href="/favicon.ico?v=3" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=3" />
 
         {/* Google Search Console Verification */}
         <meta name="google-site-verification" content="PGhV84C11AofLbbgcqGSqWfOF6Su5x10bykyx3E3Ptg" />
