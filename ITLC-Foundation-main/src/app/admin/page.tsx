@@ -9,7 +9,8 @@ import {
   Mail, MapPin, DollarSign, Calendar, X, Sprout, Check, Loader2,
   Phone, Clock, Sparkles, Globe, BookOpen, ExternalLink, RefreshCw,
   Eye, EyeOff, Search, Download, Printer, Filter, CreditCard, Send,
-  CheckCircle2, AlertCircle, Copy, ArrowUpRight, QrCode, Compass
+  CheckCircle2, AlertCircle, Copy, ArrowUpRight, QrCode, Compass,
+  Bell, BellRing
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ImageUploadField } from '@/components/admin/image-upload-field';
@@ -85,6 +86,12 @@ export default function AdminPage() {
   const [lastDonationSync, setLastDonationSync] = useState<string>('');
   const [donationsSearch, setDonationsSearch] = useState('');
   const [donationsTypeFilter, setDonationsTypeFilter] = useState<'all' | 'one-time' | 'monthly'>('all');
+
+  // Donation Notification Bell & Live Tracking State
+  const [unreadDonations, setUnreadDonations] = useState<any[]>([]);
+  const [unreadCount, setUnreadCount] = useState<number>(0);
+  const [showNotificationDropdown, setShowNotificationDropdown] = useState<boolean>(false);
+  const isInitialDonationsLoadedRef = React.useRef<boolean>(false);
 
   // Environment Settings (SMTP & Razorpay) State
   const [settings, setSettings] = useState({
@@ -177,10 +184,10 @@ export default function AdminPage() {
     fetchDonations();
     fetchSettings();
 
-    // Auto-poll donations every 5 seconds for live real-time sync
+    // Auto-poll donations every 3 seconds for live real-time sync & instant notification
     const interval = setInterval(() => {
       fetchDonations(true);
-    }, 5000);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, []);
@@ -200,20 +207,101 @@ export default function AdminPage() {
     }
   };
 
+  const playNotificationChime = () => {
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+      osc.frequency.setValueAtTime(880, ctx.currentTime + 0.1); // A5
+      gain.gain.setValueAtTime(0.12, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.35);
+    } catch (e) {
+      // Audio autoplay policy may suppress sound until user interacts
+    }
+  };
+
   const fetchDonations = async (silent = false) => {
     if (!silent) setIsLoadingDonations(true);
     try {
-      const res = await fetch('/api/donations');
+      const res = await fetch('/api/donations', { cache: 'no-store' });
       const data = await res.json();
-      if (data.success) {
+      if (data.success && Array.isArray(data.donations)) {
         setDonationsData(data);
         setLastDonationSync(new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+
+        // Check unread donations based on stored timestamp
+        const storageKey = 'itlc_admin_last_read_donation_time';
+        const storedLastRead = typeof window !== 'undefined' ? localStorage.getItem(storageKey) : null;
+
+        if (!storedLastRead) {
+          // Initial baseline on first load: mark previous history as seen so we only notify on new donations
+          const baselineTime = data.donations[0]?.createdAt || new Date().toISOString();
+          if (typeof window !== 'undefined') {
+            localStorage.setItem(storageKey, baselineTime);
+          }
+          setUnreadDonations([]);
+          setUnreadCount(0);
+        } else {
+          const lastReadTs = new Date(storedLastRead).getTime();
+          const unreadList = data.donations.filter((d: any) => {
+            const dTs = new Date(d.createdAt || d.date || 0).getTime();
+            return dTs > lastReadTs;
+          });
+
+          // Trigger live toast and chime if a new donation arrived
+          if (isInitialDonationsLoadedRef.current && unreadList.length > unreadCount) {
+            const newest = unreadList[0];
+            const donorName = newest.donorName || newest.donor_name || 'Supporter';
+            const amount = Number(newest.amount || 0).toLocaleString('en-IN');
+            toast({
+              title: '🔔 Naya Donation Prapt Hua!',
+              description: `${donorName} ne ₹${amount} donate kiya hai. Record dekhne ke liye Bell icon par click karein.`,
+            });
+            playNotificationChime();
+          }
+
+          setUnreadDonations(unreadList);
+          setUnreadCount(unreadList.length);
+        }
+        isInitialDonationsLoadedRef.current = true;
       }
     } catch (err) {
       console.error('Failed to load donations:', err);
     } finally {
       if (!silent) setIsLoadingDonations(false);
     }
+  };
+
+  const handleBellClick = () => {
+    // 1. Mark as read: update localStorage timestamp to now
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('itlc_admin_last_read_donation_time', new Date().toISOString());
+    }
+    
+    // 2. Reset unread counter to 0 immediately
+    setUnreadCount(0);
+    setUnreadDonations([]);
+    setShowNotificationDropdown(false);
+
+    // 3. Jump to Donation Records tab
+    setActiveTab('donations-logs');
+
+    // 4. Smooth scroll to top of main area
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // 5. Toast alert
+    toast({
+      title: '📋 Donation Records Opened',
+      description: 'Donation records display ho rahe hain. Bell icon counter reset ho kar 0 ho gaya.',
+    });
   };
 
   const fetchSettings = async () => {
@@ -1178,7 +1266,12 @@ export default function AdminPage() {
                 }`}
               >
                 {item.icon}
-                <span className="truncate">{item.label}</span>
+                <span className="truncate flex-1">{item.label}</span>
+                {item.id === 'donations-logs' && unreadCount > 0 && (
+                  <span className="ml-auto bg-red-600 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full animate-pulse">
+                    {unreadCount}
+                  </span>
+                )}
               </button>
             );
           })}
@@ -1237,6 +1330,138 @@ export default function AdminPage() {
           </div>
 
           <div className="flex items-center gap-2.5">
+            {/* Live New Donation Banner / Message */}
+            {unreadCount > 0 && unreadDonations.length > 0 && (
+              <button
+                type="button"
+                onClick={handleBellClick}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-50 to-emerald-50 border border-amber-300 text-[#083a27] text-xs font-semibold hover:shadow-md transition-all cursor-pointer animate-pulse"
+                title="Naya donation record dekhne ke liye click karein"
+              >
+                <span className="relative flex h-2 w-2 shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span className="truncate max-w-[150px] sm:max-w-[220px]">
+                  <strong>{unreadDonations[0]?.donorName || unreadDonations[0]?.donor_name || 'Supporter'}</strong> ne ₹{Number(unreadDonations[0]?.amount || 0).toLocaleString('en-IN')} donate kiya!
+                </span>
+                <span className="text-[10px] text-[#168039] font-bold underline shrink-0">
+                  View →
+                </span>
+              </button>
+            )}
+
+            {/* Notification Bell Component */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={handleBellClick}
+                onMouseEnter={() => setShowNotificationDropdown(true)}
+                className={`relative p-2 rounded-xl transition-all cursor-pointer flex items-center justify-center ${
+                  unreadCount > 0
+                    ? 'bg-amber-100 text-amber-900 hover:bg-amber-200 ring-2 ring-amber-400/60'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                }`}
+                title={unreadCount > 0 ? `${unreadCount} naye donation aaye hain. Records dekhne ke liye click karein.` : 'Notifications (0 naye)'}
+              >
+                {unreadCount > 0 ? (
+                  <BellRing className="w-5 h-5 text-amber-800 animate-bounce" />
+                ) : (
+                  <Bell className="w-5 h-5 text-gray-600" />
+                )}
+
+                {/* Counter Badge */}
+                {unreadCount > 0 ? (
+                  <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1 text-[11px] font-black text-white shadow-md ring-2 ring-white animate-pulse">
+                    {unreadCount}
+                  </span>
+                ) : (
+                  <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-gray-200 px-1 text-[9px] font-bold text-gray-600">
+                    0
+                  </span>
+                )}
+              </button>
+
+              {/* Notification Dropdown / Tooltip */}
+              {showNotificationDropdown && (
+                <div
+                  onMouseLeave={() => setShowNotificationDropdown(false)}
+                  className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 py-3 px-4 z-50 animate-in fade-in slide-in-from-top-2 duration-150"
+                >
+                  <div className="flex items-center justify-between pb-2 border-b border-gray-100">
+                    <div className="flex items-center gap-2">
+                      <Bell className="w-4 h-4 text-[#168039]" />
+                      <span className="text-xs font-bold text-gray-800">Donation Notifications</span>
+                    </div>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                      unreadCount > 0 ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-500'
+                    }`}>
+                      {unreadCount} naye
+                    </span>
+                  </div>
+
+                  {unreadCount > 0 ? (
+                    <div className="py-2 space-y-2 max-h-64 overflow-y-auto">
+                      {unreadDonations.map((item, idx) => (
+                        <div
+                          key={item.id || idx}
+                          onClick={handleBellClick}
+                          className="p-2.5 rounded-xl bg-emerald-50/70 hover:bg-emerald-100 border border-emerald-200 transition-colors cursor-pointer text-left"
+                        >
+                          <div className="flex items-center justify-between">
+                            <p className="text-xs font-bold text-gray-900">
+                              {item.donorName || item.donor_name || 'Supporter'}
+                            </p>
+                            <span className="text-xs font-black text-[#168039]">
+                              ₹{Number(item.amount || 0).toLocaleString('en-IN')}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-gray-600 mt-0.5">
+                            Kisine donation kiya hai • {item.type || 'One-Time'}
+                          </p>
+                          <p className="text-[10px] text-emerald-800 font-semibold mt-1 flex items-center justify-between">
+                            <span>Receipt: {item.receiptNo || 'Pending'}</span>
+                            <span className="underline">Click to view in records →</span>
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="py-5 text-center text-xs text-gray-400">
+                      <CheckCircle2 className="w-6 h-6 text-emerald-500 mx-auto mb-1.5 opacity-70" />
+                      Koi naya unread donation nahi hai. Sabhi records updated hain.
+                    </div>
+                  )}
+
+                  <div className="pt-2 border-t border-gray-100 flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={handleBellClick}
+                      className="text-xs font-bold text-[#168039] hover:underline flex items-center gap-1 cursor-pointer"
+                    >
+                      Open Donation Records →
+                    </button>
+                    {unreadCount > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (typeof window !== 'undefined') {
+                            localStorage.setItem('itlc_admin_last_read_donation_time', new Date().toISOString());
+                          }
+                          setUnreadCount(0);
+                          setUnreadDonations([]);
+                          setShowNotificationDropdown(false);
+                        }}
+                        className="text-[10px] text-gray-400 hover:text-gray-600 cursor-pointer"
+                      >
+                        Clear (Reset to 0)
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
             <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-xs text-[#168039] font-medium">
               <ShieldCheck className="w-3.5 h-3.5" />
               <span className="font-bold">{adminProfile.email}</span>

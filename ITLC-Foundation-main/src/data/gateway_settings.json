@@ -1,0 +1,10 @@
+{
+  "razorpayKeyId": "rzp_test_TZ8x3IGCMKW4Bk",
+  "razorpayKeySecret": "6nPeLG6zHz2v9uEYaRkhvImu",
+  "smtpHost": "smtp.hostinger.com",
+  "smtpPort": "465",
+  "smtpUser": "donation@itlcfoundation.com",
+  "smtpPass": "Itlc@1000",
+  "smtpFrom": "\"ITLC Foundation\" <donation@itlcfoundation.com>",
+  "fast2smsApiKey": ""
+}

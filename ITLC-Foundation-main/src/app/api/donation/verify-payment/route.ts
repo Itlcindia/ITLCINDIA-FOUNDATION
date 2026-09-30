@@ -3,6 +3,10 @@ import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import { executeQuery } from '@/lib/db';
+import { getGatewaySettings } from '@/lib/gateway-settings';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 const donationsFilePath = path.join(process.cwd(), 'src', 'data', 'donations.json');
 
@@ -65,8 +69,9 @@ async function saveToDatabase(record: any) {
 
 async function triggerAutoRefund(paymentId: string, amount?: number) {
   try {
-    const keyId = (process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || '').trim();
-    const keySecret = (process.env.RAZORPAY_KEY_SECRET || '').trim();
+    const gateway = getGatewaySettings();
+    const keyId = (gateway.razorpayKeyId || process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || '').trim();
+    const keySecret = (gateway.razorpayKeySecret || process.env.RAZORPAY_KEY_SECRET || '').trim();
     if (keyId && keySecret && !keyId.includes('your_razorpay') && !keySecret.includes('your_razorpay')) {
       const auth = Buffer.from(`${keyId}:${keySecret}`).toString('base64');
       const payload: any = {
@@ -131,8 +136,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const keySecret = (process.env.RAZORPAY_KEY_SECRET || '').trim();
-    const keyId = (process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || '').trim();
+    const gateway = getGatewaySettings();
+    const keySecret = (gateway.razorpayKeySecret || process.env.RAZORPAY_KEY_SECRET || '').trim();
+    const keyId = (gateway.razorpayKeyId || process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || '').trim();
 
     let verified = false;
 

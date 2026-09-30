@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import nodemailer from 'nodemailer';
+import { getGatewaySettings, saveGatewaySettings } from '@/lib/gateway-settings';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 function getEnvFilePath(filename: string): string {
   return path.join(process.cwd(), filename);
@@ -87,32 +91,10 @@ function updateEnvFile(filePath: string, updates: Record<string, string>) {
 
 export async function GET() {
   try {
-    const envLocal = parseEnvFile(getEnvFilePath('.env.local'));
-    const envBase = parseEnvFile(getEnvFilePath('.env'));
-
-    const smtpHost = envLocal.SMTP_HOST || envBase.SMTP_HOST || process.env.SMTP_HOST || 'smtp.hostinger.com';
-    const smtpPort = envLocal.SMTP_PORT || envBase.SMTP_PORT || process.env.SMTP_PORT || '465';
-    const smtpUser = envLocal.SMTP_USER || envBase.SMTP_USER || process.env.SMTP_USER || 'donation@itlcfoundation.com';
-    const smtpPass = envLocal.SMTP_PASS || envBase.SMTP_PASS || process.env.SMTP_PASS || '';
-    const rawSmtpFrom = envLocal.SMTP_FROM || envBase.SMTP_FROM || process.env.SMTP_FROM || '';
-    const smtpFrom = cleanFromHeader(rawSmtpFrom, smtpUser);
-
-    const razorpayKeyId = envLocal.RAZORPAY_KEY_ID || envBase.RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || '';
-    const razorpayKeySecret = envLocal.RAZORPAY_KEY_SECRET || envBase.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_KEY_SECRET || '';
-    const fast2smsApiKey = envLocal.FAST2SMS_API_KEY || envBase.FAST2SMS_API_KEY || process.env.FAST2SMS_API_KEY || '';
-
+    const settings = getGatewaySettings();
     return NextResponse.json({
       success: true,
-      settings: {
-        smtpHost,
-        smtpPort,
-        smtpUser,
-        smtpPass,
-        smtpFrom,
-        razorpayKeyId,
-        razorpayKeySecret,
-        fast2smsApiKey,
-      },
+      settings,
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -122,46 +104,12 @@ export async function GET() {
 export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
-    const {
-      smtpHost,
-      smtpPort,
-      smtpUser,
-      smtpPass,
-      smtpFrom,
-      razorpayKeyId,
-      razorpayKeySecret,
-      fast2smsApiKey,
-    } = body;
-
-    const updates: Record<string, string> = {};
-    if (smtpHost !== undefined) updates.SMTP_HOST = smtpHost.trim();
-    if (smtpPort !== undefined) updates.SMTP_PORT = String(smtpPort).trim();
-    if (smtpUser !== undefined) updates.SMTP_USER = smtpUser.trim();
-    if (smtpPass !== undefined) updates.SMTP_PASS = smtpPass.trim();
-    if (smtpFrom !== undefined) {
-      const cleanedFrom = cleanFromHeader(smtpFrom, smtpUser || 'donation@itlcfoundation.com');
-      updates.SMTP_FROM = cleanedFrom;
-    }
-    if (razorpayKeyId !== undefined) {
-      updates.RAZORPAY_KEY_ID = razorpayKeyId.trim();
-      updates.NEXT_PUBLIC_RAZORPAY_KEY_ID = razorpayKeyId.trim();
-    }
-    if (razorpayKeySecret !== undefined) updates.RAZORPAY_KEY_SECRET = razorpayKeySecret.trim();
-    if (fast2smsApiKey !== undefined) updates.FAST2SMS_API_KEY = fast2smsApiKey.trim();
-
-    for (const [k, v] of Object.entries(updates)) {
-      process.env[k] = v;
-    }
-
-    const localEnvPath = getEnvFilePath('.env.local');
-    const baseEnvPath = getEnvFilePath('.env');
-
-    updateEnvFile(localEnvPath, updates);
-    updateEnvFile(baseEnvPath, updates);
+    const updated = saveGatewaySettings(body);
 
     return NextResponse.json({
       success: true,
-      message: 'Environment settings (SMTP & Razorpay) updated successfully in .env.local and runtime.',
+      settings: updated,
+      message: 'Environment settings (SMTP & Razorpay) updated permanently in persistent storage and runtime.',
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

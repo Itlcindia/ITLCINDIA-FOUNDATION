@@ -3,6 +3,10 @@ import fs from 'fs';
 import path from 'path';
 import nodemailer from 'nodemailer';
 import { verifyPassword, hashPassword, hashOtp, verifyOtp } from '@/lib/encryption';
+import { getGatewaySettings } from '@/lib/gateway-settings';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 const accountsFile = path.resolve(process.cwd(), 'src/data/admin_accounts.json');
 const otpFile = path.resolve(process.cwd(), 'src/data/admin_otp.json');
@@ -59,14 +63,13 @@ function writeOtps(otps: Record<string, { otp?: string; otp_hash?: string; expir
 }
 
 async function sendOtpEmail(toEmail: string, otp: string, purpose: 'login' | 'reset') {
-  const envLocal = parseEnvFile(getEnvFilePath('.env.local'));
-  const envBase = parseEnvFile(getEnvFilePath('.env'));
+  const gateway = getGatewaySettings();
 
-  const host = envLocal.SMTP_HOST || envBase.SMTP_HOST || process.env.SMTP_HOST || 'smtp.hostinger.com';
-  const port = parseInt(envLocal.SMTP_PORT || envBase.SMTP_PORT || process.env.SMTP_PORT || '465', 10);
-  const user = envLocal.SMTP_USER || envBase.SMTP_USER || process.env.SMTP_USER || 'donation@itlcfoundation.com';
-  const pass = envLocal.SMTP_PASS || envBase.SMTP_PASS || process.env.SMTP_PASS || '';
-  const from = envLocal.SMTP_FROM || envBase.SMTP_FROM || process.env.SMTP_FROM || '"ITLC Foundation Security" <' + user + '>';
+  const host = gateway.smtpHost || process.env.SMTP_HOST || 'smtp.hostinger.com';
+  const port = parseInt(String(gateway.smtpPort || process.env.SMTP_PORT || '465'), 10);
+  const user = gateway.smtpUser || process.env.SMTP_USER || 'donation@itlcfoundation.com';
+  const pass = gateway.smtpPass || process.env.SMTP_PASS || '';
+  const from = gateway.smtpFrom || process.env.SMTP_FROM || '"ITLC Foundation Security" <' + user + '>';
 
   if (!user || !pass) {
     console.log('[AUTH OTP] SMTP credentials not set. Simulated OTP is:', otp);
