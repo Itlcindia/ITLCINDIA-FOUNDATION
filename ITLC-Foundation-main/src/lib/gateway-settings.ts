@@ -112,6 +112,13 @@ export function getGatewaySettings(): GatewaySettings {
     } catch (e) {
       console.error('Error reading gateway_settings.json:', e);
     }
+  } else {
+    const examplePath = path.resolve(process.cwd(), 'src/data/gateway_settings.json.example');
+    if (fs.existsSync(examplePath)) {
+      try {
+        fileSettings = JSON.parse(fs.readFileSync(examplePath, 'utf8'));
+      } catch (e) {}
+    }
   }
 
   const envLocal = parseEnvFile(path.join(process.cwd(), '.env.local'));
